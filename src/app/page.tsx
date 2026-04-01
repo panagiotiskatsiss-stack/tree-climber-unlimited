@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/metadata";
+import { generateFAQSchema } from "@/lib/schema";
 
 import { Hero } from "@/components/sections/hero";
 import { TrustBadges } from "@/components/sections/trust-badges";
@@ -55,8 +56,15 @@ const homepageFAQs = [
 ];
 
 export default function HomePage() {
+  const faqSchema = generateFAQSchema(homepageFAQs);
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* 1. Hero — 2-col with inline form + glass review badges */}
       <Hero
         title="Professional Tree Service in San Andreas, CA"

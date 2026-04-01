@@ -1,0 +1,158 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+
+  /* ===== BRAND DESIGN TOKENS ===== */
+  --color-brand-dark: #0A0A0A;
+  --color-brand-card: #1A1A1A;
+  --color-brand-surface: #141414;
+  --color-brand-border: #2A2A2A;
+  --color-brand-muted: #888888;
+  --color-brand-orange: #FF6B00;
+  --color-brand-green: #228B22;
+  --color-brand-green-hover: #1a6e1a;
+}
+
+/* =============================================================
+   CONTRACTOR WEBSITE DESIGN SYSTEM
+   Primary: Forest Green (#228B22) — trust & nature
+   Accent: Orange (#FF6B00) — action & urgency
+   Dark Base: #0A0A0A — hero, dark sections, footer
+   Card Surface: #1A1A1A — cards on dark backgrounds
+   ============================================================= */
+:root {
+  --background: #ffffff;
+  --foreground: #0A0A0A;
+  --card: #ffffff;
+  --card-foreground: #0A0A0A;
+  --popover: #ffffff;
+  --popover-foreground: #0A0A0A;
+  --primary: #228B22;
+  --primary-foreground: #ffffff;
+  --secondary: #F5F5F5;
+  --secondary-foreground: #0A0A0A;
+  --muted: #F5F5F5;
+  --muted-foreground: #6B7280;
+  --accent: #F0FFF0;
+  --accent-foreground: #0A0A0A;
+  --destructive: #EF4444;
+  --border: #E5E7EB;
+  --input: #E5E7EB;
+  --ring: #228B22;
+  --chart-1: #228B22;
+  --chart-2: #1a6e1a;
+  --chart-3: #145214;
+  --chart-4: #0d3a0d;
+  --chart-5: #4CAF50;
+  --radius: 0.75rem;
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0A0A0A;
+  --sidebar-primary: #228B22;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #F0FFF0;
+  --sidebar-accent-foreground: #0A0A0A;
+  --sidebar-border: #E5E7EB;
+  --sidebar-ring: #228B22;
+  --font-heading: var(--font-bebas);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+}
+
+/* ===== GLASS EFFECT FOR REVIEW BADGES ===== */
+.glass {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ===== CUSTOM SCROLLBAR FOR TESTIMONIALS ===== */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #1A1A1A;
+  border-radius: 20px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #228B22;
+  border-radius: 20px;
+}
+
+/* ===== TEXT MARQUEE ANIMATION ===== */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* ===== HEADING FONT CLASS ===== */
+.font-heading {
+  font-family: var(--font-bebas), var(--font-sans), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}

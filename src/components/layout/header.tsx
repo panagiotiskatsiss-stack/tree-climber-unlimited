@@ -145,24 +145,28 @@ export function Header() {
                   <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
                 </Link>
                 <div className="invisible absolute left-0 top-full z-50 w-60 pt-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-                  <div className="max-h-80 overflow-y-auto rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
+                  <ul className="max-h-80 overflow-y-auto rounded-xl border border-gray-100 bg-white py-2 shadow-xl list-none m-0 p-0">
                     {siteConfig.serviceAreas.map((a) => (
-                      <Link
-                        key={a.slug}
-                        href={`/areas/${a.slug}`}
-                        className="block px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-primary/5 hover:text-primary"
-                      >
-                        {a.city}, {a.state}
-                      </Link>
+                      <li key={a.slug}>
+                        <Link
+                          href={`/areas/${a.slug}`}
+                          title={`Tree service in ${a.city}, ${a.state}`}
+                          className="block px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-primary/5 hover:text-primary"
+                        >
+                          {a.city}, {a.state}
+                        </Link>
+                      </li>
                     ))}
-                    <div className="mx-3 my-1 border-t border-gray-100" />
-                    <Link
-                      href="/areas"
-                      className="block px-4 py-2 text-sm font-semibold text-primary"
-                    >
-                      All Service Areas
-                    </Link>
-                  </div>
+                    <li className="mx-3 my-1 border-t border-gray-100" />
+                    <li>
+                      <Link
+                        href="/areas"
+                        className="block px-4 py-2 text-sm font-semibold text-primary"
+                      >
+                        All Service Areas
+                      </Link>
+                    </li>
+                  </ul>
                 </div>
               </div>
 
@@ -296,25 +300,29 @@ export function Header() {
           >
             Service Areas
           </Link>
-          <div className="flex flex-col border-b border-gray-100 py-1 pl-4">
+          <ul className="flex flex-col border-b border-gray-100 py-1 pl-4 list-none m-0 p-0">
             {siteConfig.serviceAreas.slice(0, 6).map((a) => (
-              <Link
-                key={a.slug}
-                href={`/areas/${a.slug}`}
-                onClick={closeSidebar}
-                className="px-2 py-2 text-sm text-gray-500 hover:text-primary"
-              >
-                {a.city}, {a.state}
-              </Link>
+              <li key={a.slug}>
+                <Link
+                  href={`/areas/${a.slug}`}
+                  onClick={closeSidebar}
+                  title={`Tree service in ${a.city}, ${a.state}`}
+                  className="block px-2 py-2 text-sm text-gray-500 hover:text-primary"
+                >
+                  {a.city}, {a.state}
+                </Link>
+              </li>
             ))}
-            <Link
-              href="/areas"
-              onClick={closeSidebar}
-              className="px-2 py-2 text-sm font-medium text-primary"
-            >
-              View All Areas
-            </Link>
-          </div>
+            <li>
+              <Link
+                href="/areas"
+                onClick={closeSidebar}
+                className="block px-2 py-2 text-sm font-medium text-primary"
+              >
+                View All Areas
+              </Link>
+            </li>
+          </ul>
 
           <Link
             href="/about"

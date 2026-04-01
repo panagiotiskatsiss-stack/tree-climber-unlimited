@@ -51,7 +51,7 @@ export default function AboutPage() {
                 <div className="overflow-hidden rounded-2xl">
                   <Image
                     src={ownerPhoto}
-                    alt={`Owner of ${businessName}`}
+                    alt="Michael Lewis, owner of Tree Climber Unlimited in San Andreas CA"
                     width={500}
                     height={600}
                     className="h-[500px] w-full object-cover object-top"
@@ -74,17 +74,31 @@ export default function AboutPage() {
 
             <div>
               <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl lg:text-5xl">
-                Our <span className="text-primary">Story</span>
+                Meet <span className="text-primary">Michael Lewis</span>
               </h2>
+              <p className="mt-2 text-sm font-semibold uppercase tracking-wider text-primary">
+                Owner &amp; Founder of {businessName}
+              </p>
               <p className="mt-5 text-lg leading-relaxed text-gray-600">
-                {businessName} was built on passion, hard work, great work ethic, and moral character. For over {yearsInBusiness} years, we&apos;ve been earning the trust of homeowners and property managers across {primaryCity}, {primaryState} and the greater Central California region — one job at a time.
+                Michael Lewis founded {businessName} {yearsInBusiness} years ago with a simple mission: deliver safe, quality tree care that homeowners can trust. What started as one man with a chainsaw and a climbing harness has grown into a fully licensed and insured operation serving {primaryCity}, {primaryState} and communities throughout Central California.
               </p>
               <p className="mt-4 text-lg leading-relaxed text-gray-600">
-                We are trained and qualified in all aspects of tree work, from routine trimming to the most challenging hazardous removals. Safe work practices are not optional — they are who we are. At Tree Climber Unlimited, we appreciate all the people, all the jobs, and the chance to return home safely every day.
+                Michael and his crew are trained and qualified in all aspects of tree work — from routine trimming to the most challenging hazardous removals. Safe work practices are not optional; they are who we are. Every crew member goes home safe every day, and every customer gets the same level of care and professionalism.
               </p>
               <p className="mt-4 text-lg leading-relaxed text-gray-600">
-                Safety, quality, and production aren&apos;t just words to us — they are our guarantees. From the free estimate to the final cleanup, you&apos;ll see the difference a crew that genuinely cares can make. From the Sierra Foothills to the Central Valley, we bring the same level of professionalism to every single job.
+                &ldquo;We appreciate every person and every job we take on,&rdquo; Michael says. &ldquo;Safety, quality, and production — those are our guarantees. From the free estimate to the final cleanup, you&apos;ll see the difference a crew that genuinely cares can make.&rdquo;
               </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <ShieldCheck className="size-4" /> Licensed &amp; Insured
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <Clock className="size-4" /> {yearsInBusiness}+ Years Experience
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
+                  <Users className="size-4" /> {siteConfig.serviceAreas.length} Cities Served
+                </span>
+              </div>
             </div>
           </div>
         </div>

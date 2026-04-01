@@ -50,7 +50,7 @@ export default async function OGImage() {
           style={{
             marginTop: "16px",
             fontSize: "28px",
-            color: "#32CD32",
+            color: "#228B22",
             fontWeight: 600,
             textAlign: "center",
           }}
@@ -73,7 +73,7 @@ export default async function OGImage() {
             fontSize: "26px",
             color: "white",
             fontWeight: 700,
-            background: "#32CD32",
+            background: "#228B22",
             padding: "12px 32px",
             borderRadius: "8px",
           }}

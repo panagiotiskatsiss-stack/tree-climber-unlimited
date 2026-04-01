@@ -10,7 +10,7 @@ export const siteConfig: SiteConfig = {
   primaryCity: "San Andreas",
   primaryState: "CA",
   address: {
-    street: "",
+    street: "23 W St Charles St",
     city: "San Andreas",
     state: "CA",
     zip: "95249",
@@ -31,7 +31,12 @@ export const siteConfig: SiteConfig = {
   logo: "/images/logo.webp",
   videoUrl: "",
 
-  beforeAfterPhotos: [],
+  beforeAfterPhotos: [
+    { before: "/images/before-after/before-1.png", after: "/images/before-after/after-1.png", caption: "Full Tree Removal in San Andreas, CA" },
+    { before: "/images/before-after/before-2.png", after: "/images/before-after/after-2.png", caption: "Storm Damage Cleanup in Calaveras County" },
+    { before: "/images/before-after/before-3.png", after: "/images/before-after/after-3.png", caption: "Overgrown Yard Clearing in Central California" },
+    { before: "/images/before-after/before-4.png", after: "/images/before-after/after-4.png", caption: "Stump Grinding in San Andreas, CA" },
+  ],
 
   colors: {
     primary: "#228B22",
@@ -335,5 +340,21 @@ export const siteConfig: SiteConfig = {
     { city: "Patterson", state: "CA", zipCode: "95363", slug: "patterson-ca", image: "/images/areas/suburban-3.jpg" },
   ],
 
-  testimonials: [],
+  testimonials: [
+    {
+      name: "Robert H.",
+      city: "San Andreas, CA",
+      text: "Michael and his crew removed two large oaks that were threatening our roof. They showed up on time, worked safely, and left our yard spotless. Fair price too. Highly recommend Tree Climber Unlimited.",
+    },
+    {
+      name: "Karen M.",
+      city: "Angels Camp, CA",
+      text: "Had a massive pine come down in the storm and these guys were out the next morning. Professional, fast, and careful around our fence and garden. Couldn't ask for better emergency service.",
+    },
+    {
+      name: "David P.",
+      city: "Valley Springs, CA",
+      text: "Used Tree Climber Unlimited for stump grinding after another company left three stumps in our front yard. Ground them all down below grade in under two hours. Great work and great people.",
+    },
+  ],
 };

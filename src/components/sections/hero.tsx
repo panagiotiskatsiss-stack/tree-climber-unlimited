@@ -90,9 +90,7 @@ export function Hero({
             </h1>
 
             {subtitle && (
-              <p className="mt-5 max-w-xl text-lg text-gray-300 sm:text-xl">
-                {subtitle}
-              </p>
+              <p className="mt-5 max-w-xl text-lg text-gray-300 sm:text-xl" dangerouslySetInnerHTML={{ __html: subtitle }} />
             )}
 
             {/* Phone CTA */}

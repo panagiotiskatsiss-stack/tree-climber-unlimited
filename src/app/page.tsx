@@ -26,7 +26,7 @@ export const metadata: Metadata = generatePageMetadata(
 const homepageFAQs = [
   {
     question: "How much does tree removal cost in Central California?",
-    answer: "Every tree is different, so pricing depends on the size, location, and condition of the tree. Removal starts at $500 and goes up from there. We provide free on-site estimates so you know exactly what to expect — no surprises. Give us a call at (209) 660-3450 to schedule yours.",
+    answer: "Every tree is different, so pricing depends on the size, location, and condition of the tree. <strong>Removal starts at $500</strong> and goes up from there. We provide <strong>free on-site estimates</strong> so you know exactly what to expect — no surprises. Give us a call at (209) 660-3450 to schedule yours.",
   },
   {
     question: "Do you offer emergency tree removal services?",
@@ -34,7 +34,7 @@ const homepageFAQs = [
   },
   {
     question: "Is Tree Climber Unlimited licensed and insured?",
-    answer: "Yes. We are fully licensed and insured, so you can have complete peace of mind knowing your property and our crew are protected on every job.",
+    answer: "Yes. We are <strong>fully licensed and insured</strong>, so you can have complete peace of mind knowing your property and our crew are protected on every job.",
   },
   {
     question: "How deep does stump grinding go?",
@@ -60,7 +60,7 @@ export default function HomePage() {
       {/* 1. Hero — 2-col with inline form + glass review badges */}
       <Hero
         title="Professional Tree Service in San Andreas, CA"
-        subtitle="Expert tree removal, trimming, stump grinding, and emergency tree services. 15 years of experience, trained and qualified in all aspects of tree work. Free estimates — removal starts at $500."
+        subtitle="Expert tree removal, trimming, stump grinding, and emergency tree services. <strong>15 years of experience</strong>, trained and qualified in all aspects of tree work. <strong>Free estimates</strong> — removal starts at $500."
         backgroundImage="/images/hero/hero-bg.jpg"
         showForm
         showBadges

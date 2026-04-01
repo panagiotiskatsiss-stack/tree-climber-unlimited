@@ -4,19 +4,19 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const projects = [
-  { src: "/images/portfolio/project-1.jpg", alt: "Tree removal project" },
-  { src: "/images/portfolio/project-2.jpg", alt: "Tree pruning work" },
-  { src: "/images/portfolio/project-3.jpg", alt: "Storm damage cleanup" },
-  { src: "/images/portfolio/project-4.jpg", alt: "Stump grinding completed" },
-  { src: "/images/portfolio/project-5.jpg", alt: "Hazard tree removal" },
-  { src: "/images/portfolio/project-6.jpg", alt: "Professional tree service" },
+  { src: "/images/portfolio/project-1.jpg", alt: "Large oak tree removal in San Andreas CA residential yard" },
+  { src: "/images/portfolio/project-2.jpg", alt: "Professional tree pruning and trimming in Calaveras County" },
+  { src: "/images/portfolio/project-3.jpg", alt: "Storm damage tree cleanup in Central California neighborhood" },
+  { src: "/images/portfolio/project-4.jpg", alt: "Stump grinding completed in a San Andreas CA front yard" },
+  { src: "/images/portfolio/project-5.jpg", alt: "Hazardous dead tree removal near home in the Sierra Foothills" },
+  { src: "/images/portfolio/project-6.jpg", alt: "Tree Climber Unlimited crew completing a tree service job in CA" },
 ];
 
 const beforeAfter = [
-  { before: "/images/before-after/before-1.png", after: "/images/before-after/after-1.png", label: "Full Tree Removal" },
-  { before: "/images/before-after/before-2.png", after: "/images/before-after/after-2.png", label: "Storm Damage Cleanup" },
-  { before: "/images/before-after/before-3.png", after: "/images/before-after/after-3.png", label: "Overgrown Yard Clearing" },
-  { before: "/images/before-after/before-4.png", after: "/images/before-after/after-4.png", label: "Stump Grinding" },
+  { before: "/images/before-after/before-1.png", after: "/images/before-after/after-1.png", label: "Full Tree Removal in San Andreas, CA" },
+  { before: "/images/before-after/before-2.png", after: "/images/before-after/after-2.png", label: "Storm Damage Cleanup in Calaveras County" },
+  { before: "/images/before-after/before-3.png", after: "/images/before-after/after-3.png", label: "Overgrown Yard Clearing in Central California" },
+  { before: "/images/before-after/before-4.png", after: "/images/before-after/after-4.png", label: "Stump Grinding in San Andreas, CA" },
 ];
 
 export function Portfolio() {

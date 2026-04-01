@@ -40,7 +40,7 @@ function FAQItem({ faq, isOpen, onToggle, variant }: { faq: FAQType; isOpen: boo
       )}>
         <div className="overflow-hidden">
           <div className={cn("px-6 py-5", isDark ? "border-t border-brand-border text-gray-300" : "border-t border-gray-100 text-gray-600")}>
-            <p className="text-[15px] leading-relaxed">{faq.answer}</p>
+            <p className="text-[15px] leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.answer }} />
           </div>
         </div>
       </div>

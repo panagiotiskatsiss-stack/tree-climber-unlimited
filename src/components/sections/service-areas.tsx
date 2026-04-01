@@ -18,20 +18,22 @@ export function ServiceAreas() {
               Whether you&apos;re in {primaryCity} or a surrounding community, our crew is just around the corner and ready to help.
             </p>
 
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 list-none p-0 m-0">
               {serviceAreas.map((area) => (
-                <Link
-                  key={area.slug}
-                  href={`/areas/${area.slug}`}
-                  className="group flex items-center gap-2.5 rounded-xl bg-brand-dark p-3.5 transition-all hover:bg-primary"
-                >
-                  <MapPin className="size-4 shrink-0 text-primary group-hover:text-white" />
-                  <span className="text-sm font-medium text-white">
-                    {area.city}, {area.state}
-                  </span>
-                </Link>
+                <li key={area.slug}>
+                  <Link
+                    href={`/areas/${area.slug}`}
+                    title={`Tree service in ${area.city}, ${area.state}`}
+                    className="group flex items-center gap-2.5 rounded-xl bg-brand-dark p-3.5 transition-all hover:bg-primary"
+                  >
+                    <MapPin className="size-4 shrink-0 text-primary group-hover:text-white" />
+                    <span className="text-sm font-medium text-white">
+                      {area.city}, {area.state}
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
 
             <Link
               href="/areas"

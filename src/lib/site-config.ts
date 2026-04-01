@@ -333,18 +333,6 @@ export const siteConfig: SiteConfig = {
     { city: "Oakdale", state: "CA", zipCode: "95361", slug: "oakdale-ca", image: "/images/areas/suburban-1.jpg" },
     { city: "Riverbank", state: "CA", zipCode: "95367", slug: "riverbank-ca", image: "/images/areas/suburban-2.jpg" },
     { city: "Patterson", state: "CA", zipCode: "95363", slug: "patterson-ca", image: "/images/areas/suburban-3.jpg" },
-    { city: "Newman", state: "CA", zipCode: "95360", slug: "newman-ca", image: "/images/areas/suburban-4.jpg" },
-    { city: "Hughson", state: "CA", zipCode: "95326", slug: "hughson-ca", image: "/images/areas/suburban-5.jpg" },
-    { city: "Waterford", state: "CA", zipCode: "95386", slug: "waterford-ca", image: "/images/areas/suburban-1.jpg" },
-    { city: "Gustine", state: "CA", zipCode: "95322", slug: "gustine-ca", image: "/images/areas/suburban-2.jpg" },
-    // Merced County
-    { city: "Merced", state: "CA", zipCode: "95340", slug: "merced-ca", image: "/images/areas/suburban-3.jpg" },
-    { city: "Los Banos", state: "CA", zipCode: "93635", slug: "los-banos-ca", image: "/images/areas/suburban-4.jpg" },
-    { city: "Atwater", state: "CA", zipCode: "95301", slug: "atwater-ca", image: "/images/areas/suburban-5.jpg" },
-    { city: "Livingston", state: "CA", zipCode: "95334", slug: "livingston-ca", image: "/images/areas/suburban-1.jpg" },
-    { city: "Dos Palos", state: "CA", zipCode: "93620", slug: "dos-palos-ca", image: "/images/areas/suburban-2.jpg" },
-    // Mariposa County
-    { city: "Mariposa", state: "CA", zipCode: "95338", slug: "mariposa-ca", image: "/images/areas/suburban-1.jpg" },
   ],
 
   testimonials: [],

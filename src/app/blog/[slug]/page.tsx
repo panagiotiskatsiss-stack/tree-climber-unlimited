@@ -4,18 +4,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { siteConfig } from "@/lib/site-config";
 import { generateBlogMetadata } from "@/lib/metadata";
-import { generateBreadcrumbSchema, generateArticleSchema } from "@/lib/schema";
+import {
+  generateArticleSchema,
+  generateBreadcrumbSchema,
+  baseUrl,
+  jsonLd,
+} from "@/lib/schema";
+import { getAllPosts, getPostBySlug, getRelatedPosts } from "@/lib/blog";
+import { PageHero } from "@/components/sections/page-hero";
 import { CTASection } from "@/components/sections/cta-section";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Calendar, Phone } from "lucide-react";
-import { blogPosts } from "@/content/blog/posts";
-
-function getBlogPost(slug: string) {
-  return blogPosts.find((p) => p.slug === slug);
-}
+import { ArrowLeft, CalendarDays, Phone } from "lucide-react";
 
 export function generateStaticParams() {
-  return blogPosts.map((post) => ({ slug: post.slug }));
+  return getAllPosts().map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -24,9 +26,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = getPostBySlug(slug);
   if (!post) return {};
   return generateBlogMetadata(post, siteConfig);
+}
+
+function fmt(date: string) {
+  return new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
 export default async function BlogPostPage({
@@ -35,120 +41,74 @@ export default async function BlogPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getBlogPost(slug);
+  const post = getPostBySlug(slug);
+  if (!post) notFound();
 
-  if (!post) {
-    notFound();
-  }
-
-  const { phone, businessName } = siteConfig;
+  const { businessName, phone } = siteConfig;
+  const url = baseUrl(siteConfig);
   const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
+  const related = getRelatedPosts(post, 3);
 
-  const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: `https://${siteConfig.domain}` },
-    { name: "Blog", url: `https://${siteConfig.domain}/blog` },
-    { name: post.title, url: `https://${siteConfig.domain}/blog/${post.slug}` },
-  ]);
-  const articleSchema = generateArticleSchema(post, siteConfig);
+  const schema = jsonLd(
+    generateArticleSchema(post, siteConfig),
+    generateBreadcrumbSchema([
+      { name: "Home", url: `${url}/` },
+      { name: "Blog", url: `${url}/blog` },
+      { name: post.title, url: `${url}/blog/${post.slug}` },
+    ])
+  );
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schema }} />
+
+      <PageHero
+        title={post.title}
+        breadcrumbs={[
+          { name: "Home", href: "/" },
+          { name: "Blog", href: "/blog" },
+          { name: post.category },
+        ]}
+        showCtas={false}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-      />
 
-      {/* Breadcrumbs */}
-      <div className="bg-gray-50 pt-20">
-        <div className="mx-auto max-w-4xl px-4 py-3 sm:px-6 lg:px-8">
-          <nav className="flex text-sm text-gray-500">
-            <Link href="/" className="hover:text-gray-900">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <Link href="/blog" className="hover:text-gray-900">
-              Blog
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="truncate text-gray-900">{post.title}</span>
-          </nav>
-        </div>
-      </div>
+      <article className="bg-white py-14 lg:py-16">
+        <div className="container-site max-w-3xl">
+          <div className="mb-6 flex flex-wrap items-center gap-3">
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wide text-primary">
+              {post.category}
+            </span>
+            <span className="flex items-center gap-1.5 text-sm text-gray-500">
+              <CalendarDays className="size-4" />
+              <time dateTime={post.date}>{fmt(post.date)}</time>
+            </span>
+          </div>
 
-      {/* Article */}
-      <article className="py-12">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          {/* Article Header */}
-          <header className="mb-10">
-            <div className="mb-4 flex items-center gap-3">
-              <span className="inline-flex rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-                {post.category}
-              </span>
-              <div className="flex items-center gap-1.5 text-sm text-gray-500">
-                <Calendar className="size-4" />
-                <time dateTime={post.date}>
-                  {new Date(post.date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </time>
-              </div>
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-              {post.title}
-            </h1>
-            <p className="mt-4 text-lg text-gray-600">{post.excerpt}</p>
-          </header>
+          <div className="relative mb-8 aspect-[16/9] overflow-hidden rounded-2xl">
+            <Image src={post.coverImage!} alt={post.title} fill priority sizes="(max-width:1024px) 100vw, 768px" className="object-cover" />
+          </div>
 
-          {/* Cover Image */}
-          {post.coverImage && (
-            <div className="relative mb-10 aspect-video overflow-hidden rounded-lg">
-              <Image
-                src={post.coverImage}
-                alt={post.title}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 896px) 100vw, 896px"
-              />
-            </div>
-          )}
+          <p className="mb-8 text-lg font-medium leading-relaxed text-gray-700">{post.excerpt}</p>
 
-          {/* Article Content */}
-          <div
-            className="prose prose-lg prose-gray max-w-none prose-headings:font-bold prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline"
-            dangerouslySetInnerHTML={{ __html: post.content }}
-          />
+          <div className="article-content" dangerouslySetInnerHTML={{ __html: post.content }} />
 
-          {/* CTA within article */}
-          <div className="mt-12 rounded-lg border border-gray-200 bg-gray-50 p-8 text-center">
-            <h3 className="text-xl font-bold text-gray-900">
-              Need Professional Help?
-            </h3>
+          {/* In-article CTA */}
+          <div className="mt-12 rounded-2xl border border-primary/15 bg-primary/5 p-7 text-center">
+            <h2 className="font-heading text-xl tracking-tight text-gray-900">Need Professional Tree Care?</h2>
             <p className="mt-2 text-gray-600">
-              {businessName} is here to help with your project. Call us for a
-              free estimate.
+              {businessName} is here to help with a free, no-obligation estimate.
             </p>
             <a href={phoneHref} className="mt-4 inline-block">
-              <Button
-                size="lg"
-                className="h-12 cursor-pointer gap-2 px-8 text-base font-semibold"
-              >
+              <Button className="h-12 gap-2 rounded-full px-7 font-bold uppercase tracking-wide">
                 <Phone className="size-5" />
                 {phone}
               </Button>
             </a>
           </div>
 
-          {/* Back to Blog */}
-          <div className="mt-10">
+          <div className="mt-8">
             <Link href="/blog">
-              <Button variant="outline" className="cursor-pointer gap-2">
+              <Button variant="outline" className="gap-2 rounded-full font-semibold">
                 <ArrowLeft className="size-4" />
                 Back to Blog
               </Button>
@@ -157,9 +117,39 @@ export default async function BlogPostPage({
         </div>
       </article>
 
+      {/* Related posts (cluster) */}
+      {related.length > 0 && (
+        <section className="bg-muted py-14">
+          <div className="container-site">
+            <h2 className="text-center font-heading text-2xl tracking-tight text-gray-900">
+              Related Articles
+            </h2>
+            <div className="mx-auto mt-8 grid gap-6 md:grid-cols-3">
+              {related.map((r) => (
+                <Link
+                  key={r.slug}
+                  href={`/blog/${r.slug}`}
+                  title={`${r.title} — ${businessName}`}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[var(--shadow-natural)] transition-all hover:-translate-y-1 hover:shadow-[var(--shadow-deep)]"
+                >
+                  <div className="relative aspect-[16/9]">
+                    <Image src={r.coverImage!} alt={r.title} fill sizes="33vw" className="object-cover" />
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-heading text-base leading-snug tracking-tight text-gray-900 group-hover:text-primary">
+                      {r.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       <CTASection
-        title="Questions About Your Project?"
-        subtitle={`Contact ${businessName} today. We are happy to answer your questions and provide a free estimate.`}
+        title="Questions About Your Trees?"
+        subtitle={`Contact ${businessName} today — we're happy to help and provide a free estimate.`}
       />
     </>
   );

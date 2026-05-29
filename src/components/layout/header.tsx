@@ -1,374 +1,271 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, X, Menu, ChevronDown } from "lucide-react";
+import { QuotePopup } from "@/components/forms/quote-popup";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Phone, Menu, ChevronDown, ArrowRight } from "lucide-react";
 
 export function Header() {
-  const { businessName, phone, email, ctaText, logo } = siteConfig;
+  const { businessName, phone, ctaText, logo, services, serviceAreas } = siteConfig;
   const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
 
   const [scrolled, setScrolled] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    function handleScroll() {
+      setScrolled(window.scrollY > 12);
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (sidebarOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [sidebarOpen]);
+  // Group service areas by county for the mega-menu.
+  const areasByCounty = serviceAreas.reduce<Record<string, typeof serviceAreas>>((acc, a) => {
+    const key = a.county ?? `${a.state}`;
+    (acc[key] ??= []).push(a);
+    return acc;
+  }, {});
 
-  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
+  const linkCls =
+    "flex items-center gap-1 rounded-lg px-3 py-2 text-[15px] font-semibold text-gray-700 transition-colors hover:bg-muted hover:text-primary";
+  const panelCls =
+    "invisible absolute top-full z-50 translate-y-1 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100";
 
   return (
-    <>
-      <header className="fixed top-0 right-0 left-0 z-50">
-        {/* Top Bar — Desktop Only */}
-        <div className="hidden bg-brand-dark text-white lg:block">
-          <div className="mx-auto flex h-10 max-w-[1770px] items-center justify-between px-6 text-sm">
-            <span className="font-medium text-gray-300">
-              Free Estimates &bull; Licensed &amp; Insured &bull; 15+ Years Experience
-            </span>
-            <div className="flex items-center gap-6">
-              <a
-                href={phoneHref}
-                className="flex items-center gap-1.5 font-semibold text-white transition-colors hover:text-primary"
-              >
-                <Phone className="size-3.5" />
-                {phone}
-              </a>
-              {email && (
-                <a
-                  href={`mailto:${email}`}
-                  className="flex items-center gap-1.5 text-gray-300 transition-colors hover:text-white"
-                >
-                  <Mail className="size-3.5" />
-                  {email}
-                </a>
-              )}
-            </div>
-          </div>
-        </div>
+    <header
+      className={cn(
+        "sticky top-0 z-50 w-full bg-white transition-all duration-300",
+        scrolled ? "shadow-md" : "shadow-sm"
+      )}
+    >
+      <div
+        className={cn(
+          "container-site flex items-center justify-between transition-all duration-300",
+          scrolled ? "h-16" : "h-20"
+        )}
+      >
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2" aria-label={businessName}>
+          <Image
+            src={logo}
+            alt={`${businessName} logo`}
+            width={180}
+            height={48}
+            priority
+            className={cn(
+              "w-auto object-contain transition-all duration-300",
+              scrolled ? "h-9" : "h-11"
+            )}
+          />
+        </Link>
 
-        {/* Main Header */}
-        <div
-          className={cn(
-            "transition-all duration-300",
-            scrolled
-              ? "bg-white shadow-lg"
-              : "bg-white/95 backdrop-blur-sm"
-          )}
-        >
-          <div className="mx-auto flex h-16 max-w-[1770px] items-center justify-between px-4 lg:h-20 lg:px-6">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 shrink-0">
-              {logo && (
-                <Image
-                  src={logo}
-                  alt={businessName}
-                  width={48}
-                  height={48}
-                  className={cn(
-                    "rounded-lg object-contain transition-all duration-300",
-                    scrolled ? "size-10" : "size-12"
-                  )}
-                />
-              )}
-              <span className={cn(
-                "font-heading tracking-wide transition-all duration-300",
-                scrolled ? "text-xl" : "text-2xl"
-              )}>
-                <span className="text-primary">Tree Climber</span>{" "}
-                <span className="text-brand-dark">Unlimited</span>
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden items-center gap-1 lg:flex">
-              <Link
-                href="/"
-                className="px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-              >
+        {/* Desktop nav with dropdowns */}
+        <nav className="hidden lg:block" aria-label="Primary">
+          <ul className="flex items-center gap-1">
+            <li>
+              <Link href="/" title={`Home — ${businessName}`} className={linkCls}>
                 Home
               </Link>
+            </li>
 
-              {/* Services Dropdown */}
-              <div className="group relative">
-                <Link
-                  href="/services"
-                  className="inline-flex items-center gap-1 px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-                >
-                  Services
-                  <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
-                </Link>
-                <div className="invisible absolute left-0 top-full z-50 w-60 pt-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-                  <div className="rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
-                    {siteConfig.services.map((s) => (
+            {/* Services dropdown */}
+            <li className="group relative">
+              <Link href="/services" title={`Services — ${businessName}`} className={linkCls}>
+                Services
+                <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
+              </Link>
+              <div className={cn(panelCls, "left-0 w-64")}>
+                <ul className="overflow-hidden rounded-xl border border-gray-200 bg-white py-2 shadow-[var(--shadow-deep)]">
+                  {services.map((s) => (
+                    <li key={s.slug}>
                       <Link
-                        key={s.slug}
                         href={`/services/${s.slug}`}
-                        className="block px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-primary/5 hover:text-primary"
+                        title={`${s.name} — ${businessName}`}
+                        className="block px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-muted hover:text-primary"
                       >
                         {s.name}
                       </Link>
-                    ))}
-                    <div className="mx-3 my-1 border-t border-gray-100" />
+                    </li>
+                  ))}
+                  <li className="mt-1 border-t border-gray-100">
                     <Link
                       href="/services"
-                      className="block px-4 py-2 text-sm font-semibold text-primary"
+                      className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-bold text-primary hover:underline"
                     >
-                      View All Services
+                      All Services <ArrowRight className="size-3.5" />
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+            </li>
+
+            {/* Service Areas mega-dropdown */}
+            <li className="group relative">
+              <Link href="/areas" title={`Service Areas — ${businessName}`} className={linkCls}>
+                Service Areas
+                <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
+              </Link>
+              <div className={cn(panelCls, "left-1/2 w-[34rem] max-w-[90vw] -translate-x-1/2 group-hover:-translate-x-1/2 group-focus-within:-translate-x-1/2")}>
+                <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-[var(--shadow-deep)]">
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
+                    {Object.entries(areasByCounty).map(([county, areas]) => (
+                      <div key={county}>
+                        <p className="mb-1.5 text-xs font-bold uppercase tracking-wide text-gray-400">
+                          {county}
+                        </p>
+                        <ul className="space-y-1">
+                          {areas.slice(0, 5).map((a) => (
+                            <li key={a.slug}>
+                              <Link
+                                href={`/areas/${a.slug}`}
+                                title={`Tree Service in ${a.city}, ${a.state} — ${businessName}`}
+                                className="block text-sm text-gray-700 transition-colors hover:text-primary"
+                              >
+                                {a.city}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 border-t border-gray-100 pt-3">
+                    <Link
+                      href="/areas"
+                      className="flex items-center gap-1.5 text-sm font-bold text-primary hover:underline"
+                    >
+                      View all service areas <ArrowRight className="size-3.5" />
                     </Link>
                   </div>
                 </div>
               </div>
+            </li>
 
-              {/* Areas Dropdown */}
-              <div className="group relative">
-                <Link
-                  href="/areas"
-                  className="inline-flex items-center gap-1 px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-                >
-                  Service Areas
-                  <ChevronDown className="size-3.5 transition-transform group-hover:rotate-180" />
-                </Link>
-                <div className="invisible absolute left-0 top-full z-50 w-60 pt-2 opacity-0 transition-all group-hover:visible group-hover:opacity-100">
-                  <ul className="max-h-80 overflow-y-auto rounded-xl border border-gray-100 bg-white py-2 shadow-xl list-none m-0 p-0">
-                    {siteConfig.serviceAreas.map((a) => (
-                      <li key={a.slug}>
-                        <Link
-                          href={`/areas/${a.slug}`}
-                          title={`Tree service in ${a.city}, ${a.state}`}
-                          className="block px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-primary/5 hover:text-primary"
-                        >
-                          {a.city}, {a.state}
-                        </Link>
-                      </li>
-                    ))}
-                    <li className="mx-3 my-1 border-t border-gray-100" />
-                    <li>
-                      <Link
-                        href="/areas"
-                        className="block px-4 py-2 text-sm font-semibold text-primary"
-                      >
-                        All Service Areas
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <Link
-                href="/about"
-                className="px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-              >
+            <li>
+              <Link href="/about" title={`About — ${businessName}`} className={linkCls}>
                 About
               </Link>
-              <Link
-                href="/blog"
-                className="px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-              >
+            </li>
+            <li>
+              <Link href="/blog" title={`Blog — ${businessName}`} className={linkCls}>
                 Blog
               </Link>
-              <Link
-                href="/contact"
-                className="px-3 py-2 text-[15px] font-medium text-gray-700 transition-colors hover:text-primary"
-              >
-                Contact
-              </Link>
-            </nav>
-
-            {/* Desktop: Phone + CTA */}
-            <div className="hidden items-center gap-4 lg:flex">
-              <a
-                href={phoneHref}
-                className="flex items-center gap-2 text-sm font-bold text-brand-dark"
-              >
-                <div className="flex size-9 items-center justify-center rounded-full bg-primary/10">
-                  <Phone className="size-4 text-primary" />
-                </div>
-                {phone}
-              </a>
-              <Link href="/contact">
-                <Button
-                  size="lg"
-                  className="cursor-pointer rounded-full px-7 font-bold uppercase tracking-wide"
-                >
-                  {ctaText}
-                </Button>
-              </Link>
-            </div>
-
-            {/* Mobile: Phone + Hamburger */}
-            <div className="flex items-center gap-2 lg:hidden">
-              <a href={phoneHref}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="cursor-pointer text-primary"
-                >
-                  <Phone className="size-5" />
-                  <span className="sr-only">Call {phone}</span>
-                </Button>
-              </a>
-              <button
-                onClick={() => setSidebarOpen(true)}
-                className="flex size-10 items-center justify-center rounded-lg text-gray-700"
-                aria-label="Open menu"
-              >
-                <Menu className="size-6" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Mobile Sidebar Overlay */}
-      <div
-        className={cn(
-          "fixed inset-0 z-[9998] bg-black/50 transition-opacity duration-300 lg:hidden",
-          sidebarOpen ? "opacity-100" : "pointer-events-none opacity-0"
-        )}
-        onClick={closeSidebar}
-      />
-
-      {/* Mobile Sidebar */}
-      <div
-        className={cn(
-          "fixed top-0 left-0 z-[9999] h-full w-[300px] bg-white shadow-2xl transition-transform duration-500 ease-out lg:hidden",
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        )}
-      >
-        <div className="flex h-16 items-center justify-between border-b border-gray-100 px-5">
-          <span className="font-heading text-xl tracking-wide">
-            <span className="text-primary">Tree Climber</span> Unlimited
-          </span>
-          <button
-            onClick={closeSidebar}
-            className="flex size-9 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100"
-            aria-label="Close menu"
-          >
-            <X className="size-5" />
-          </button>
-        </div>
-
-        <nav className="flex flex-col overflow-y-auto px-4 py-4" style={{ maxHeight: "calc(100vh - 200px)" }}>
-          <Link
-            href="/"
-            onClick={closeSidebar}
-            className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            Home
-          </Link>
-
-          <Link
-            href="/services"
-            onClick={closeSidebar}
-            className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            Services
-          </Link>
-          <div className="flex flex-col border-b border-gray-100 py-1 pl-4">
-            {siteConfig.services.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/services/${s.slug}`}
-                onClick={closeSidebar}
-                className="px-2 py-2 text-sm text-gray-500 hover:text-primary"
-              >
-                {s.name}
-              </Link>
-            ))}
-          </div>
-
-          <Link
-            href="/areas"
-            onClick={closeSidebar}
-            className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            Service Areas
-          </Link>
-          <ul className="flex flex-col border-b border-gray-100 py-1 pl-4 list-none m-0 p-0">
-            {siteConfig.serviceAreas.slice(0, 6).map((a) => (
-              <li key={a.slug}>
-                <Link
-                  href={`/areas/${a.slug}`}
-                  onClick={closeSidebar}
-                  title={`Tree service in ${a.city}, ${a.state}`}
-                  className="block px-2 py-2 text-sm text-gray-500 hover:text-primary"
-                >
-                  {a.city}, {a.state}
-                </Link>
-              </li>
-            ))}
+            </li>
             <li>
-              <Link
-                href="/areas"
-                onClick={closeSidebar}
-                className="block px-2 py-2 text-sm font-medium text-primary"
-              >
-                View All Areas
+              <Link href="/contact" title={`Contact — ${businessName}`} className={linkCls}>
+                Contact
               </Link>
             </li>
           </ul>
-
-          <Link
-            href="/about"
-            onClick={closeSidebar}
-            className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            About
-          </Link>
-          <Link
-            href="/blog"
-            onClick={closeSidebar}
-            className="border-b border-gray-100 px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            Blog
-          </Link>
-          <Link
-            href="/contact"
-            onClick={closeSidebar}
-            className="px-2 py-3.5 text-base font-medium text-gray-800 hover:text-primary"
-          >
-            Contact
-          </Link>
         </nav>
 
-        {/* Mobile Sidebar Bottom CTAs */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white p-4">
-          <a href={phoneHref} className="block w-full">
-            <Button
-              size="lg"
-              className="h-12 w-full cursor-pointer gap-2 rounded-full text-base font-bold"
-            >
+        {/* Desktop right: phone + CTA popup */}
+        <div className="hidden items-center gap-4 lg:flex">
+          <a
+            href={phoneHref}
+            className="flex items-center gap-2 text-sm font-bold text-gray-900 transition-colors hover:text-primary"
+          >
+            <span className="flex size-9 items-center justify-center rounded-full bg-primary/10">
+              <Phone className="size-4 text-primary" />
+            </span>
+            {phone}
+          </a>
+          <QuotePopup
+            triggerLabel={ctaText}
+            triggerClassName="h-11 rounded-full px-6 text-sm font-bold uppercase tracking-wide"
+          />
+        </div>
+
+        {/* Mobile: click-to-call + hamburger */}
+        <div className="flex items-center gap-1.5 lg:hidden">
+          <a href={phoneHref} aria-label={`Call ${phone}`}>
+            <Button size="icon" aria-label={`Call ${phone}`} className="size-10 rounded-full">
               <Phone className="size-5" />
-              {phone}
             </Button>
           </a>
-          <Link href="/contact" onClick={closeSidebar} className="mt-2 block w-full">
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-12 w-full cursor-pointer rounded-full border-primary text-base font-bold text-primary hover:bg-primary/5"
+
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger
+              render={<Button variant="ghost" size="icon" className="size-10" aria-label="Open menu" />}
             >
-              Get Free Estimate
-            </Button>
-          </Link>
+              <Menu className="size-6" />
+            </SheetTrigger>
+
+            <SheetContent side="left" className="w-[320px] overflow-y-auto bg-brand-dark text-white">
+              <SheetHeader>
+                <SheetTitle className="text-white">{businessName}</SheetTitle>
+              </SheetHeader>
+
+              <nav aria-label="Mobile" className="px-2">
+                <ul className="flex flex-col">
+                  <li>
+                    <Link href="/" onClick={() => setMobileOpen(false)} className="block border-b border-white/10 px-3 py-3.5 text-base font-semibold text-gray-200 hover:bg-primary hover:text-white">
+                      Home
+                    </Link>
+                  </li>
+                  {/* Services + sub-links */}
+                  <li className="border-b border-white/10">
+                    <Link href="/services" onClick={() => setMobileOpen(false)} className="block px-3 pt-3.5 pb-1 text-base font-semibold text-white">
+                      Services
+                    </Link>
+                    <ul className="pb-2">
+                      {services.map((s) => (
+                        <li key={s.slug}>
+                          <Link href={`/services/${s.slug}`} onClick={() => setMobileOpen(false)} className="block px-6 py-2 text-sm text-gray-300 hover:text-primary">
+                            {s.name}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                  {/* Areas */}
+                  <li>
+                    <Link href="/areas" onClick={() => setMobileOpen(false)} className="block border-b border-white/10 px-3 py-3.5 text-base font-semibold text-gray-200 hover:bg-primary hover:text-white">
+                      Service Areas
+                    </Link>
+                  </li>
+                  {["about", "blog", "contact"].map((p) => (
+                    <li key={p}>
+                      <Link href={`/${p}`} onClick={() => setMobileOpen(false)} className="block border-b border-white/10 px-3 py-3.5 text-base font-semibold capitalize text-gray-200 hover:bg-primary hover:text-white">
+                        {p}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+
+              <div className="mt-6 flex flex-col gap-3 px-4">
+                <a href={phoneHref} className="w-full">
+                  <Button className="h-12 w-full gap-2 rounded-full text-base font-bold">
+                    <Phone className="size-5" />
+                    {phone}
+                  </Button>
+                </a>
+                <Link href="/contact" onClick={() => setMobileOpen(false)} className="w-full">
+                  <Button
+                    variant="outline"
+                    className="h-12 w-full rounded-full border-white/30 bg-white/5 text-base font-bold text-white hover:bg-white/15 hover:text-white"
+                  >
+                    {ctaText}
+                  </Button>
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
-    </>
+    </header>
   );
 }

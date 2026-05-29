@@ -1,7 +1,25 @@
+import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, MapPin, Clock, Facebook } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Facebook,
+  Instagram,
+} from "lucide-react";
+
+const companyLinks = [
+  { label: "Home", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Service Areas", href: "/areas" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+];
 
 export function Footer() {
   const {
@@ -9,185 +27,170 @@ export function Footer() {
     tagline,
     phone,
     email,
-    services,
-    serviceAreas,
-    ctaText,
-    socialLinks,
-    businessHours,
     address,
+    businessHours,
+    logo,
+    services,
+    socialLinks,
+    ctaText,
   } = siteConfig;
-
   const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
+  const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-brand-dark text-gray-300">
-      {/* CTA Banner */}
-      <div className="bg-primary py-12 lg:py-16">
-        <div className="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="font-heading text-3xl text-white sm:text-4xl lg:text-5xl">
-            Ready to Get Started?
-          </h2>
-          <p className="mt-3 text-lg text-white/90">
-            Contact us today for a free, no-obligation estimate
-          </p>
-          <div className="mt-8">
-            <a href={phoneHref}>
-              <Button
-                size="lg"
-                className="h-14 cursor-pointer gap-2 rounded-full bg-white px-10 text-lg font-bold text-brand-dark hover:bg-gray-100"
-              >
-                <Phone className="size-5" />
-                {ctaText}
-              </Button>
-            </a>
+    <footer className="bg-brand-darker text-gray-300">
+      {/* Pre-footer CTA banner */}
+      <div className="border-b border-white/10 bg-primary">
+        <div className="container-site flex flex-col items-center justify-between gap-4 py-7 text-center sm:flex-row sm:text-left">
+          <div>
+            <p className="font-heading text-2xl uppercase tracking-tight text-white">
+              Need Tree Work Done Right?
+            </p>
+            <p className="text-white/85">
+              Free estimates, fast response, and a crew you can trust.
+            </p>
           </div>
+          <a href={phoneHref} className="shrink-0">
+            <Button className="h-12 gap-2 rounded-full bg-white px-7 text-base font-bold text-primary hover:bg-white/90">
+              <Phone className="size-5" />
+              {phone}
+            </Button>
+          </a>
         </div>
       </div>
 
-      {/* Footer Columns */}
-      <div className="mx-auto max-w-[1770px] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Column 1: Business Info */}
-          <div>
-            <h3 className="font-heading text-2xl tracking-wide text-white">
-              <span className="text-primary">Tree Climber</span> Unlimited
-            </h3>
-            {tagline && (
-              <p className="mt-3 text-sm text-gray-400">{tagline}</p>
+      {/* Columns */}
+      <div className="container-site grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Column 1 — brand */}
+        <div>
+          <Image
+            src={logo}
+            alt={`${businessName} logo`}
+            width={180}
+            height={48}
+            className="h-11 w-auto object-contain brightness-0 invert"
+          />
+          <p className="mt-4 text-sm leading-relaxed text-gray-400">{tagline}</p>
+          <div className="mt-5 flex items-center gap-3">
+            {socialLinks.facebook && (
+              <a
+                href={socialLinks.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+                className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-primary"
+              >
+                <Facebook className="size-4" />
+              </a>
             )}
-            <div className="mt-5 flex flex-col gap-3">
+            {socialLinks.instagram && (
+              <a
+                href={socialLinks.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="flex size-9 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-primary"
+              >
+                <Instagram className="size-4" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Column 2 — company */}
+        <nav aria-label="Company">
+          <h3 className="font-heading text-lg uppercase tracking-tight text-white">
+            Company
+          </h3>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {companyLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  title={`${link.label} — ${businessName}`}
+                  className="text-gray-400 transition-colors hover:text-primary"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Column 3 — services */}
+        <nav aria-label="Services">
+          <h3 className="font-heading text-lg uppercase tracking-tight text-white">
+            Services
+          </h3>
+          <ul className="mt-4 space-y-2.5 text-sm">
+            {services.map((service) => (
+              <li key={service.slug}>
+                <Link
+                  href={`/services/${service.slug}`}
+                  title={`${service.name} — ${businessName}`}
+                  className="text-gray-400 transition-colors hover:text-primary"
+                >
+                  {service.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* Column 4 — contact */}
+        <div>
+          <h3 className="font-heading text-lg uppercase tracking-tight text-white">
+            Contact
+          </h3>
+          <ul className="mt-4 space-y-3 text-sm">
+            <li className="flex items-start gap-2.5">
+              <MapPin className="mt-0.5 size-4 shrink-0 text-brand-gold" />
+              <span className="text-gray-400">
+                {address.street}, {address.city}, {address.state} {address.zip}
+              </span>
+            </li>
+            <li>
               <a
                 href={phoneHref}
-                className="flex items-center gap-2.5 text-sm font-medium text-gray-300 transition-colors hover:text-white"
+                className="flex items-center gap-2.5 text-gray-400 transition-colors hover:text-primary"
               >
-                <Phone className="size-4 text-primary" />
+                <Phone className="size-4 shrink-0 text-brand-gold" />
                 {phone}
               </a>
-              {email && (
-                <a
-                  href={`mailto:${email}`}
-                  className="flex items-center gap-2.5 text-sm font-medium text-gray-300 transition-colors hover:text-white"
-                >
-                  <Mail className="size-4 text-primary" />
-                  {email}
-                </a>
-              )}
-              {address.city && (
-                <div className="flex items-center gap-2.5 text-sm text-gray-400">
-                  <MapPin className="size-4 text-primary" />
-                  {address.city}, {address.state} {address.zip}
-                </div>
-              )}
-              <div className="flex items-center gap-2.5 text-sm text-gray-400">
-                <Clock className="size-4 text-primary" />
-                {businessHours.days}: {businessHours.hours}
-              </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="mt-5 flex gap-3">
-              {socialLinks.facebook && (
-                <a
-                  href={socialLinks.facebook}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex size-9 items-center justify-center rounded-full bg-white/10 text-gray-300 transition-all hover:bg-primary hover:text-white"
-                  aria-label="Facebook"
-                >
-                  <Facebook className="size-4" />
-                </a>
-              )}
-            </div>
-          </div>
-
-          {/* Column 2: Quick Links */}
-          <div>
-            <h3 className="font-heading text-lg tracking-wide text-white">
-              Quick Links
-            </h3>
-            <ul className="mt-4 flex flex-col gap-2.5">
-              {[
-                { label: "Home", href: "/" },
-                { label: "About Us", href: "/about" },
-                { label: "Services", href: "/services" },
-                { label: "Service Areas", href: "/areas" },
-                { label: "Blog", href: "/blog" },
-                { label: "Contact", href: "/contact" },
-              ].map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-gray-400 transition-colors hover:text-primary"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 3: Services */}
-          <div>
-            <h3 className="font-heading text-lg tracking-wide text-white">
-              Our Services
-            </h3>
-            <ul className="mt-4 flex flex-col gap-2.5">
-              {services.map((service) => (
-                <li key={service.slug}>
-                  <Link
-                    href={`/services/${service.slug}`}
-                    className="text-sm text-gray-400 transition-colors hover:text-primary"
-                  >
-                    {service.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Column 4: Service Areas */}
-          <div>
-            <h3 className="font-heading text-lg tracking-wide text-white">
-              Service Areas
-            </h3>
-            <ul className="mt-4 flex flex-col gap-2.5">
-              {serviceAreas.map((area) => (
-                <li key={area.slug}>
-                  <Link
-                    href={`/areas/${area.slug}`}
-                    className="text-sm text-gray-400 transition-colors hover:text-primary"
-                  >
-                    {area.city}, {area.state}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+            </li>
+            <li>
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center gap-2.5 break-all text-gray-400 transition-colors hover:text-primary"
+              >
+                <Mail className="size-4 shrink-0 text-brand-gold" />
+                {email}
+              </a>
+            </li>
+            <li className="flex items-start gap-2.5">
+              <Clock className="mt-0.5 size-4 shrink-0 text-brand-gold" />
+              <span className="text-gray-400">
+                {businessHours.days}
+                <br />
+                {businessHours.hours}
+              </span>
+            </li>
+          </ul>
         </div>
       </div>
 
-      {/* Bottom Bar */}
+      {/* Copyright bar */}
       <div className="border-t border-white/10">
-        <div className="mx-auto max-w-[1770px] px-4 py-6 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <p className="text-sm text-gray-500">
-              &copy; {new Date().getFullYear()} {businessName}. All rights reserved.
-            </p>
-            <div className="flex gap-6">
-              <Link
-                href="/privacy-policy"
-                className="text-sm text-gray-500 transition-colors hover:text-gray-300"
-              >
-                Privacy Policy
-              </Link>
-              <Link
-                href="/terms-of-service"
-                className="text-sm text-gray-500 transition-colors hover:text-gray-300"
-              >
-                Terms of Service
-              </Link>
-            </div>
-          </div>
+        <div className="container-site flex flex-col items-center justify-between gap-2 py-5 text-xs text-gray-500 sm:flex-row">
+          <p>
+            © {year} {businessName}. All rights reserved.
+          </p>
+          <p>
+            Licensed &amp; Insured · {ctaText} ·{" "}
+            <a href={phoneHref} className="hover:text-primary">
+              {phone}
+            </a>
+          </p>
         </div>
       </div>
     </footer>

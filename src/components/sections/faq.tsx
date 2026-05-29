@@ -1,79 +1,51 @@
-"use client";
-
-import { useState } from "react";
 import type { FAQ as FAQType } from "@/types";
-import { ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { SectionHeading } from "@/components/sections/section-heading";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 interface FAQSectionProps {
   faqs: FAQType[];
   title?: string;
-  variant?: "light" | "dark";
+  eyebrow?: string;
+  subtitle?: string;
 }
 
-function FAQItem({ faq, isOpen, onToggle, variant }: { faq: FAQType; isOpen: boolean; onToggle: () => void; variant: "light" | "dark" }) {
-  const isDark = variant === "dark";
-
-  return (
-    <div className={cn("overflow-hidden rounded-xl transition-all", isDark ? "bg-brand-card" : "bg-white shadow-sm")}>
-      <button
-        onClick={onToggle}
-        className={cn(
-          "flex w-full items-center justify-between gap-4 px-6 py-5 text-left transition-colors",
-          isOpen && (isDark ? "bg-primary" : "bg-primary"),
-        )}
-      >
-        <span className={cn(
-          "text-base font-semibold",
-          isOpen ? "text-white" : (isDark ? "text-white" : "text-brand-dark")
-        )}>
-          {faq.question}
-        </span>
-        <ChevronDown className={cn(
-          "size-5 shrink-0 transition-transform duration-300",
-          isOpen ? "rotate-180 text-white" : (isDark ? "text-gray-400" : "text-gray-400")
-        )} />
-      </button>
-      <div className={cn(
-        "grid transition-all duration-300",
-        isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-      )}>
-        <div className="overflow-hidden">
-          <div className={cn("px-6 py-5", isDark ? "border-t border-brand-border text-gray-300" : "border-t border-gray-100 text-gray-600")}>
-            <p className="text-[15px] leading-relaxed" dangerouslySetInnerHTML={{ __html: faq.answer }} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function FAQSection({ faqs, title = "Frequently Asked Questions", variant = "dark" }: FAQSectionProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const isDark = variant === "dark";
-
+/**
+ * Section 14 — FAQ accordion. Answers render HTML (AEO direct-answer +
+ * <strong> keywords). FAQPage schema is injected separately at page level.
+ */
+export function FAQSection({
+  faqs,
+  title = "Frequently Asked Questions",
+  eyebrow = "FAQ",
+  subtitle,
+}: FAQSectionProps) {
   if (faqs.length === 0) return null;
 
   return (
-    <section className={cn("py-20 lg:py-28", isDark ? "bg-brand-dark" : "bg-gray-50")}>
-      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center">
-          <h2 className={cn("font-heading text-3xl sm:text-4xl lg:text-5xl", isDark ? "text-white" : "text-brand-dark")}>
-            Frequently <span className="text-primary">Asked Questions</span>
-          </h2>
-        </div>
+    <section className="bg-white py-16 lg:py-20">
+      <div className="container-site max-w-3xl">
+        <SectionHeading eyebrow={eyebrow} title={title} subtitle={subtitle} />
 
-        <div className="mt-12 flex flex-col gap-3">
+        <Accordion className="mt-10" defaultValue={[0]}>
           {faqs.map((faq, index) => (
-            <FAQItem
-              key={index}
-              faq={faq}
-              isOpen={openIndex === index}
-              onToggle={() => setOpenIndex(openIndex === index ? null : index)}
-              variant={variant}
-            />
+            <AccordionItem key={index} value={index} className="border-b border-gray-200">
+              <AccordionTrigger className="py-5 text-left font-heading text-lg tracking-tight text-gray-900 normal-case aria-expanded:text-primary">
+                {faq.question}
+              </AccordionTrigger>
+              <AccordionContent>
+                <div
+                  className="pb-5 text-[15px] leading-relaxed text-gray-600 [&_strong]:font-semibold [&_strong]:text-gray-900"
+                  dangerouslySetInnerHTML={{ __html: faq.answer }}
+                />
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       </div>
     </section>
   );

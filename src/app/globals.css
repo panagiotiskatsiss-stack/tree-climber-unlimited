@@ -4,25 +4,36 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =============================================================
+   DESIGN TOKENS — Contractor Template v2
+   5 color roles (per CONTRACTOR-WEBSITE-DESIGN.md):
+     1. Primary Action  -> --primary   (CTA buttons, links, active)
+     2. Dark Base        -> --brand-dark    (hero bg, dark sections, footer)
+     3. Card / Surface   -> --brand-surface (cards/boxes on dark sections)
+     4. Light Base       -> --background / --muted (light sections)
+     5. Accent / Gold    -> --brand-gold   (star ratings, highlights)
+
+   TO RE-THEME PER CLIENT: edit the :root block below.
+   - --primary: the client's main brand color (must contrast on dark AND light)
+   - --brand-dark: keep dark (dark hero is non-negotiable); tint toward brand hue if desired
+   - Fonts are set in src/app/layout.tsx via next/font (Inter + display).
+   Current theme: Forest Green (#2D6A4F) primary, near-black navy dark base, gold accent.
+   ============================================================= */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-heading);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-display), var(--font-inter), ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, monospace;
+
+  /* Brand roles exposed as Tailwind colors: bg-brand-dark, text-brand-gold, bg-brand-surface */
+  --color-brand-dark: var(--brand-dark);
+  --color-brand-darker: var(--brand-darker);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-gold: var(--brand-gold);
+
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -39,66 +50,54 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
 
-  /* ===== BRAND DESIGN TOKENS ===== */
-  --color-brand-dark: #0A0A0A;
-  --color-brand-card: #1A1A1A;
-  --color-brand-surface: #141414;
-  --color-brand-border: #2A2A2A;
-  --color-brand-muted: #888888;
-  --color-brand-orange: #FF6B00;
-  --color-brand-green: #228B22;
-  --color-brand-green-hover: #1a6e1a;
+  /* Design-system shadow set */
+  --shadow-natural: 6px 6px 9px rgba(0, 0, 0, 0.2);
+  --shadow-deep: 12px 12px 50px rgba(0, 0, 0, 0.4);
+  --shadow-cta: 0 14px 24px -10px rgba(0, 0, 0, 0.35);
 }
 
-/* =============================================================
-   CONTRACTOR WEBSITE DESIGN SYSTEM
-   Primary: Forest Green (#228B22) — trust & nature
-   Accent: Orange (#FF6B00) — action & urgency
-   Dark Base: #0A0A0A — hero, dark sections, footer
-   Card Surface: #1A1A1A — cards on dark backgrounds
-   ============================================================= */
 :root {
-  --background: #ffffff;
-  --foreground: #0A0A0A;
-  --card: #ffffff;
-  --card-foreground: #0A0A0A;
-  --popover: #ffffff;
-  --popover-foreground: #0A0A0A;
-  --primary: #228B22;
-  --primary-foreground: #ffffff;
-  --secondary: #F5F5F5;
-  --secondary-foreground: #0A0A0A;
-  --muted: #F5F5F5;
-  --muted-foreground: #6B7280;
-  --accent: #F0FFF0;
-  --accent-foreground: #0A0A0A;
-  --destructive: #EF4444;
-  --border: #E5E7EB;
-  --input: #E5E7EB;
-  --ring: #228B22;
-  --chart-1: #228B22;
-  --chart-2: #1a6e1a;
-  --chart-3: #145214;
-  --chart-4: #0d3a0d;
-  --chart-5: #4CAF50;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.18 0.01 250);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.01 250);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.01 250);
+
+  /* 1. Primary Action — Tree Climber Unlimited forest green #228B22 */
+  --primary: oklch(0.56 0.16 142);
+  --primary-foreground: oklch(0.99 0 0);
+
+  /* 3 (light variant) Secondary / muted / accent built off the primary hue */
+  --secondary: oklch(0.96 0.01 142);
+  --secondary-foreground: oklch(0.3 0.06 142);
+  --muted: oklch(0.97 0.005 142);
+  --muted-foreground: oklch(0.5 0.012 245);
+  --accent: oklch(0.95 0.02 142);
+  --accent-foreground: oklch(0.3 0.07 142);
+
+  --destructive: oklch(0.58 0.22 27);
+  --border: oklch(0.91 0.005 245);
+  --input: oklch(0.91 0.005 245);
+  --ring: oklch(0.56 0.16 142);
+
+  /* 2. Dark Base — near-black cool navy #14161E */
+  --brand-dark: oklch(0.2 0.012 264);
+  --brand-darker: oklch(0.16 0.012 264);
+  /* 4. Card/Surface on dark — #1f2533 */
+  --brand-surface: oklch(0.27 0.014 264);
+  /* 5. Accent (stars/highlights) — TCU orange #FF6B00 */
+  --brand-gold: oklch(0.72 0.19 47);
+
   --radius: 0.75rem;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #0A0A0A;
-  --sidebar-primary: #228B22;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #F0FFF0;
-  --sidebar-accent-foreground: #0A0A0A;
-  --sidebar-border: #E5E7EB;
-  --sidebar-ring: #228B22;
-  --font-heading: var(--font-bebas);
 }
 
 @layer base {
@@ -106,53 +105,58 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
   }
   html {
-    @apply font-sans scroll-smooth;
+    @apply font-sans;
+    scroll-behavior: smooth;
+  }
+  /* Headings use the display font, uppercase, tight tracking (design-system rule) */
+  h1, h2, h3 {
+    @apply font-heading uppercase tracking-tight;
   }
 }
 
-/* ===== GLASS EFFECT FOR REVIEW BADGES ===== */
-.glass {
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+@layer utilities {
+  /* Glassmorphism review pill (most common conversion element across teardowns) */
+  .glass {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  /* Section container — design-system spacing */
+  .container-site {
+    @apply mx-auto w-[92%] max-w-[1280px];
+  }
 }
 
-.glass-dark {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Long-form article content (blog posts, legal pages) — replaces the
+   Tailwind Typography plugin which isn't installed. */
+.article-content {
+  @apply text-[1.0625rem] leading-relaxed text-gray-700;
 }
-
-/* ===== CUSTOM SCROLLBAR FOR TESTIMONIALS ===== */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+.article-content h2 {
+  @apply mt-10 mb-3 font-heading text-2xl tracking-tight text-gray-900;
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #1A1A1A;
-  border-radius: 20px;
+.article-content h3 {
+  @apply mt-8 mb-2 font-heading text-xl tracking-tight text-gray-900;
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #228B22;
-  border-radius: 20px;
+.article-content p {
+  @apply mb-5;
 }
-
-/* ===== TEXT MARQUEE ANIMATION ===== */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.article-content ul {
+  @apply mb-5 ml-5 list-disc space-y-2 marker:text-primary;
 }
-.animate-marquee {
-  animation: marquee 30s linear infinite;
+.article-content ol {
+  @apply mb-5 ml-5 list-decimal space-y-2 marker:text-primary;
 }
-
-/* ===== HEADING FONT CLASS ===== */
-.font-heading {
-  font-family: var(--font-bebas), var(--font-sans), sans-serif;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+.article-content a {
+  @apply font-medium text-primary underline underline-offset-2 hover:text-primary/80;
+}
+.article-content strong {
+  @apply font-semibold text-gray-900;
+}
+.article-content blockquote {
+  @apply my-6 border-l-4 border-primary/40 bg-muted py-2 pl-5 italic text-gray-600;
 }

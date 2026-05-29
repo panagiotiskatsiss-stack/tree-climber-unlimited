@@ -1,177 +1,75 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/metadata";
+import { PageHero } from "@/components/sections/page-hero";
 
 export const metadata: Metadata = generatePageMetadata(
   {
-    title: "Terms of Service",
-    description: `Terms of Service for ${siteConfig.businessName}. Please read these terms carefully before using our website or services.`,
+    title: `Terms of Service`,
+    description: `Terms of Service for ${siteConfig.businessName} (${siteConfig.primaryCity}, ${siteConfig.primaryState}). The terms and conditions governing your use of our website and the tree care services we provide.`,
     path: "/terms-of-service",
   },
   siteConfig
 );
 
 export default function TermsOfServicePage() {
-  const { businessName, email, domain, primaryState } = siteConfig;
-  const currentYear = new Date().getFullYear();
+  const { businessName, email, phone, domain } = siteConfig;
+  const updated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-          Terms of Service
-        </h1>
-        <p className="mt-4 text-sm text-gray-500">
-          Last updated: January 1, {currentYear}
-        </p>
-
-        <div className="prose prose-gray mt-10 max-w-none">
-          <h2>Acceptance of Terms</h2>
-          <p>
-            By accessing and using the {businessName} website at {domain}
-            (&quot;the Site&quot;), you agree to be bound by these Terms of
-            Service (&quot;Terms&quot;). If you do not agree with any part of
-            these Terms, you must not use the Site.
-          </p>
-
-          <h2>Services</h2>
-          <p>
-            {businessName} provides home improvement and contractor services
-            as described on the Site. All services are subject to availability
-            and may vary by location. Specific terms for individual projects
-            will be outlined in a separate written agreement or estimate
-            provided prior to the commencement of work.
-          </p>
-          <p>
-            Estimates and quotes provided through the Site or during
-            consultations are non-binding until a formal agreement is signed
-            by both parties. Final pricing may vary based on actual project
-            scope, materials, and conditions discovered during the work.
-          </p>
-
-          <h2>Use of the Website</h2>
-          <p>You agree to use the Site only for lawful purposes and in a manner that does not:</p>
-          <ul>
-            <li>Violate any applicable laws or regulations</li>
-            <li>Infringe on the rights of others</li>
-            <li>Interfere with or disrupt the Site or its servers</li>
-            <li>Attempt to gain unauthorized access to any part of the Site</li>
-            <li>Submit false, misleading, or fraudulent information</li>
-            <li>Use the Site to send unsolicited commercial communications</li>
-          </ul>
-
-          <h2>Intellectual Property</h2>
-          <p>
-            All content on the Site, including text, images, logos, graphics,
-            and design elements, is the property of {businessName} or its
-            licensors and is protected by copyright, trademark, and other
-            intellectual property laws. You may not reproduce, distribute,
-            modify, or create derivative works from any content on the Site
-            without our express written permission.
-          </p>
-
-          <h2>Contact Form and Communications</h2>
-          <p>
-            When you submit information through our contact form or other
-            communication channels, you represent that the information
-            provided is accurate and complete. We will use your information
-            in accordance with our Privacy Policy. By submitting a contact
-            form, you consent to being contacted by {businessName} regarding
-            your inquiry.
-          </p>
-
-          <h2>Disclaimer of Warranties</h2>
-          <p>
-            The Site is provided on an &quot;as is&quot; and &quot;as
-            available&quot; basis without warranties of any kind, either
-            express or implied, including but not limited to warranties of
-            merchantability, fitness for a particular purpose, and
-            non-infringement.
-          </p>
-          <p>
-            We do not warrant that the Site will be uninterrupted,
-            error-free, or free of viruses or other harmful components. We
-            make no guarantees regarding the accuracy, completeness, or
-            timeliness of information on the Site.
-          </p>
-
-          <h2>Limitation of Liability</h2>
-          <p>
-            To the fullest extent permitted by law, {businessName}, its
-            owners, employees, agents, and affiliates shall not be liable for
-            any indirect, incidental, special, consequential, or punitive
-            damages arising from or related to your use of the Site,
-            including but not limited to loss of profits, data, or goodwill.
-          </p>
-          <p>
-            Our total liability for any claim arising from or related to the
-            Site shall not exceed the amount you paid to {businessName} for
-            services in the twelve (12) months preceding the claim, or one
-            hundred dollars ($100), whichever is greater.
-          </p>
-
-          <h2>Indemnification</h2>
-          <p>
-            You agree to indemnify, defend, and hold harmless {businessName},
-            its owners, employees, agents, and affiliates from and against
-            any claims, damages, losses, costs, and expenses (including
-            reasonable attorney fees) arising from your use of the Site or
-            violation of these Terms.
-          </p>
-
-          <h2>Third-Party Links</h2>
-          <p>
-            The Site may contain links to third-party websites or services
-            that are not owned or controlled by {businessName}. We have no
-            control over and assume no responsibility for the content,
-            privacy policies, or practices of any third-party websites. Your
-            use of third-party websites is at your own risk.
-          </p>
-
-          <h2>Governing Law</h2>
-          <p>
-            These Terms shall be governed by and construed in accordance with
-            the laws of the State of {primaryState}, without regard to its
-            conflict of law provisions. Any legal disputes arising from these
-            Terms or your use of the Site shall be resolved in the courts
-            located in {primaryState}.
-          </p>
-
-          <h2>Changes to These Terms</h2>
-          <p>
-            We reserve the right to modify these Terms at any time. Changes
-            will be effective immediately upon posting on the Site. Your
-            continued use of the Site after any changes constitutes your
-            acceptance of the revised Terms. We encourage you to review these
-            Terms periodically.
-          </p>
-
-          <h2>Severability</h2>
-          <p>
-            If any provision of these Terms is found to be invalid or
-            unenforceable, the remaining provisions shall continue in full
-            force and effect.
-          </p>
-
-          <h2>Contact Us</h2>
-          <p>
-            If you have any questions about these Terms of Service, please
-            contact us:
-          </p>
-          <ul>
-            <li>
-              <strong>Business:</strong> {businessName}
-            </li>
-            <li>
-              <strong>Email:</strong>{" "}
-              <a href={`mailto:${email}`}>{email}</a>
-            </li>
-            <li>
-              <strong>Website:</strong> {domain}
-            </li>
-          </ul>
+    <>
+      <PageHero
+        title="Terms of Service"
+        breadcrumbs={[{ name: "Home", href: "/" }, { name: "Terms of Service" }]}
+        showCtas={false}
+      />
+      <section className="bg-white py-14 lg:py-16">
+        <div className="container-site max-w-3xl">
+          <p className="mb-8 text-sm text-gray-500">Last updated: {updated}</p>
+          <div className="article-content">
+            <p>
+              These Terms of Service (&quot;Terms&quot;) govern your use of the website {domain} and the services
+              provided by {businessName}. By using our site or engaging our services, you agree to these Terms.
+            </p>
+            <h2>Use of Our Website</h2>
+            <p>
+              You may use our website for lawful purposes only. You agree not to misuse the site, attempt to
+              disrupt it, or use it in any way that could harm {businessName} or other users.
+            </p>
+            <h2>Estimates &amp; Services</h2>
+            <p>
+              Estimates provided are based on the information available at the time and the conditions observed
+              during assessment. Final pricing may vary if conditions differ from what was originally described.
+              All services are subject to a separate agreement provided before work begins.
+            </p>
+            <h2>Scheduling &amp; Cancellation</h2>
+            <p>
+              We make every effort to honor scheduled appointments. Weather and emergency situations may require
+              rescheduling. Please contact us as early as possible if you need to reschedule.
+            </p>
+            <h2>Limitation of Liability</h2>
+            <p>
+              {businessName} is fully licensed and insured. To the fullest extent permitted by law, we are not
+              liable for any indirect or consequential damages arising from the use of our website. Nothing in these
+              Terms limits liability that cannot be limited under applicable law.
+            </p>
+            <h2>Intellectual Property</h2>
+            <p>
+              All content on this website, including text, images, and logos, is the property of {businessName} and
+              may not be reproduced without permission.
+            </p>
+            <h2>Changes to These Terms</h2>
+            <p>
+              We may update these Terms from time to time. Continued use of the website after changes constitutes
+              acceptance of the updated Terms.
+            </p>
+            <h2>Contact Us</h2>
+            <p>
+              Questions about these Terms? Contact {businessName} at <a href={`mailto:${email}`}>{email}</a> or {phone}.
+            </p>
+          </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </>
   );
 }

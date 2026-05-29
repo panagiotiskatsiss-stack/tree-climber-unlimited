@@ -1,60 +1,55 @@
-import type { Metadata } from "next";
-import { Inter, Bebas_Neue } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Inter, Oswald } from "next/font/google";
+import "./globals.css";
 import { siteConfig } from "@/lib/site-config";
-import { generateLocalBusinessSchema } from "@/lib/schema";
-import { Analytics, GoogleSearchConsole } from "@/lib/analytics";
+import { baseUrl } from "@/lib/schema";
+import { TopBar } from "@/components/layout/top-bar";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
-import "./globals.css";
+import { Analytics } from "@/lib/analytics";
 
 const inter = Inter({
-  variable: "--font-sans",
   subsets: ["latin"],
+  variable: "--font-inter",
   display: "swap",
 });
 
-const bebasNeue = Bebas_Neue({
-  variable: "--font-bebas",
-  weight: "400",
+const oswald = Oswald({
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-display",
   display: "swap",
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl(siteConfig)),
   title: {
-    default: `${siteConfig.businessName} — ${siteConfig.tagline}`,
-    template: `%s | ${siteConfig.businessName}`,
+    default: `${siteConfig.businessName} | ${siteConfig.tagline}`,
+    template: `%s`,
   },
-  description: `${siteConfig.businessName} provides professional ${siteConfig.services.map((s) => s.name.toLowerCase()).join(", ")} in ${siteConfig.primaryCity}, ${siteConfig.primaryState}. ${siteConfig.yearsInBusiness}+ years of trusted service. ${siteConfig.ctaText}.`,
-  metadataBase: new URL(`https://${siteConfig.domain}`),
-  openGraph: {
-    siteName: siteConfig.businessName,
-    locale: "en_US",
-    type: "website",
-  },
+  description: siteConfig.tagline,
+  icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
+  robots: { index: true, follow: true },
+  ...(process.env.NEXT_PUBLIC_GSC_VERIFICATION
+    ? { verification: { google: process.env.NEXT_PUBLIC_GSC_VERIFICATION } }
+    : {}),
+};
+
+export const viewport: Viewport = {
+  themeColor: "#14161e",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const localBusinessSchema = generateLocalBusinessSchema(siteConfig);
-
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${bebasNeue.variable} h-full antialiased`}>
-      <head>
-        <GoogleSearchConsole />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(localBusinessSchema),
-          }}
-        />
-      </head>
-      <body className="min-h-full flex flex-col font-sans">
+    <html lang="en" className={`${inter.variable} ${oswald.variable}`}>
+      <body>
+        <TopBar />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main>{children}</main>
         <Footer />
         <Analytics />
       </body>

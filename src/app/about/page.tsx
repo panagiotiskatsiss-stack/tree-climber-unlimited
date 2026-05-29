@@ -2,20 +2,26 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/metadata";
-import { Hero } from "@/components/sections/hero";
+import {
+  generateLocalBusinessSchema,
+  generateBreadcrumbSchema,
+  baseUrl,
+  jsonLd,
+} from "@/lib/schema";
+import { getIcon } from "@/lib/icons";
+import { PageHero } from "@/components/sections/page-hero";
+import { WhyChooseUs } from "@/components/sections/why-choose-us";
+import { Certifications } from "@/components/sections/certifications";
 import { CTASection } from "@/components/sections/cta-section";
-import { CheckCircle, ShieldCheck, Users, Clock, Award, Shield, DollarSign, HeartHandshake } from "lucide-react";
 
 export const metadata: Metadata = generatePageMetadata(
   {
-    title: `About ${siteConfig.businessName}`,
-    description: `Learn about ${siteConfig.businessName} — ${siteConfig.yearsInBusiness}+ years of professional service in ${siteConfig.primaryCity}, ${siteConfig.primaryState}. Licensed, insured, and committed to quality.`,
+    title: `About Us — ${siteConfig.primaryCity}, ${siteConfig.primaryState} Tree Care`,
+    description: `Meet ${siteConfig.businessName} — locally owned, licensed & insured tree care experts serving ${siteConfig.primaryCity}, ${siteConfig.primaryState} for ${siteConfig.yearsInBusiness}+ years. ISA Certified Arborists you can trust.`,
     path: "/about",
   },
   siteConfig
 );
-
-const uspIcons = [Award, Shield, DollarSign, HeartHandshake, CheckCircle];
 
 export default function AboutPage() {
   const {
@@ -23,160 +29,111 @@ export default function AboutPage() {
     yearsInBusiness,
     primaryCity,
     primaryState,
-    whyChooseUs,
-    usps,
-    guarantees,
     ownerPhoto,
-    phone,
+    whyChooseUs,
+    guarantees,
+    aggregateRating,
+    targetCustomer,
   } = siteConfig;
+  const url = baseUrl(siteConfig);
+  const Check = getIcon("CircleCheckBig");
 
-  const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
+  const schema = jsonLd(
+    generateLocalBusinessSchema(siteConfig),
+    generateBreadcrumbSchema([
+      { name: "Home", url: `${url}/` },
+      { name: "About", url: `${url}/about` },
+    ])
+  );
+
+  const stats = [
+    { value: `${yearsInBusiness}+`, label: "Years in Business" },
+    { value: aggregateRating.ratingValue, label: "Average Rating" },
+    { value: `${aggregateRating.reviewCount}+`, label: "Happy Customers" },
+    { value: "100%", label: "Licensed & Insured" },
+  ];
 
   return (
     <>
-      <Hero
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schema }} />
+
+      <PageHero
         title={`About ${businessName}`}
-        subtitle={`Proudly serving ${primaryCity}, ${primaryState} and surrounding communities for over ${yearsInBusiness} years.`}
-        backgroundImage="/images/about/about-bg.jpg"
-        showBadges={false}
-        showForm={false}
+        subtitleHtml={`Locally owned, <strong>licensed &amp; insured</strong> tree care — proudly serving ${primaryCity}, ${primaryState} for over ${yearsInBusiness} years.`}
+        breadcrumbs={[{ name: "Home", href: "/" }, { name: "About" }]}
       />
 
-      {/* Owner / Business Story */}
-      <section className="py-20 lg:py-28">
-        <div className="mx-auto max-w-[1770px] px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
-            {ownerPhoto ? (
-              <div className="relative mx-auto w-full max-w-md">
-                <div className="overflow-hidden rounded-2xl">
-                  <Image
-                    src={ownerPhoto}
-                    alt="Michael Lewis, owner of Tree Climber Unlimited in San Andreas CA"
-                    width={500}
-                    height={600}
-                    className="h-[500px] w-full object-cover object-top"
-                  />
-                </div>
-                <div className="absolute -bottom-6 -right-4 rounded-2xl bg-primary p-6 text-center shadow-xl lg:-right-8">
-                  <p className="font-heading text-5xl text-white">{yearsInBusiness}+</p>
-                  <p className="mt-1 text-sm font-semibold text-white/90">Years of<br/>Experience</p>
-                </div>
-              </div>
-            ) : (
-              <div className="flex aspect-square w-full max-w-md items-center justify-center rounded-2xl bg-brand-dark mx-auto">
-                <div className="text-center">
-                  <Users className="mx-auto size-16 text-primary/40" />
-                  <p className="mt-4 text-lg font-semibold text-white">{businessName}</p>
-                  <p className="text-sm text-gray-400">{yearsInBusiness}+ Years of Excellence</p>
-                </div>
-              </div>
-            )}
-
-            <div>
-              <h2 className="font-heading text-3xl text-brand-dark sm:text-4xl lg:text-5xl">
-                Meet <span className="text-primary">Michael Lewis</span>
-              </h2>
-              <p className="mt-2 text-sm font-semibold uppercase tracking-wider text-primary">
-                Owner &amp; Founder of {businessName}
-              </p>
-              <p className="mt-5 text-lg leading-relaxed text-gray-600">
-                Michael Lewis founded {businessName} {yearsInBusiness} years ago with a simple mission: deliver safe, quality tree care that homeowners can trust. What started as one man with a chainsaw and a climbing harness has grown into a fully licensed and insured operation serving {primaryCity}, {primaryState} and communities throughout Central California.
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-gray-600">
-                Michael and his crew are trained and qualified in all aspects of tree work — from routine trimming to the most challenging hazardous removals. Safe work practices are not optional; they are who we are. Every crew member goes home safe every day, and every customer gets the same level of care and professionalism.
-              </p>
-              <p className="mt-4 text-lg leading-relaxed text-gray-600">
-                &ldquo;We appreciate every person and every job we take on,&rdquo; Michael says. &ldquo;Safety, quality, and production — those are our guarantees. From the free estimate to the final cleanup, you&apos;ll see the difference a crew that genuinely cares can make.&rdquo;
-              </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                  <ShieldCheck className="size-4" /> Licensed &amp; Insured
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                  <Clock className="size-4" /> {yearsInBusiness}+ Years Experience
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-primary">
-                  <Users className="size-4" /> {siteConfig.serviceAreas.length} Cities Served
-                </span>
-              </div>
-            </div>
+      {/* Story */}
+      <section className="bg-white py-16 lg:py-20">
+        <div className="container-site grid items-center gap-12 lg:grid-cols-2">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl shadow-[var(--shadow-natural)]">
+            <Image
+              src={ownerPhoto}
+              alt={`${businessName} owner and crew in ${primaryCity}, ${primaryState}`}
+              fill
+              sizes="(max-width:1024px) 100vw, 50vw"
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <h2 className="font-heading text-3xl tracking-tight text-gray-900">Our Story</h2>
+            <p className="mt-4 text-lg leading-relaxed text-gray-600">
+              {businessName} was built on a simple idea: treat every customer&apos;s property like
+              our own. For over <strong className="font-semibold text-gray-900">{yearsInBusiness} years</strong>,
+              we&apos;ve been the team {primaryCity} homeowners call for safe, professional tree care
+              — from routine trimming to emergency storm cleanup.
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-gray-600">
+              We&apos;re a locally owned and operated business with ISA Certified Arborists on staff,
+              full insurance coverage, and a reputation built one satisfied neighbor at a time. {targetCustomer}
+            </p>
+            <ul className="mt-6 grid gap-3 sm:grid-cols-2">
+              {whyChooseUs.map((r) => (
+                <li key={r} className="flex items-start gap-2.5">
+                  <Check className="mt-0.5 size-5 shrink-0 text-primary" />
+                  <span className="text-gray-700">{r}</span>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us — Dark Section */}
-      <section className="bg-brand-dark py-20 lg:py-28">
-        <div className="mx-auto max-w-[1770px] px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <h2 className="font-heading text-3xl text-white sm:text-4xl lg:text-5xl">
-              Why Homeowners <span className="text-primary">Choose Us</span>
-            </h2>
-          </div>
+      {/* Stats band */}
+      <section className="bg-brand-dark py-12">
+        <div className="container-site grid grid-cols-2 gap-8 text-center lg:grid-cols-4">
+          {stats.map((s) => (
+            <div key={s.label}>
+              <p className="font-heading text-4xl text-primary sm:text-5xl">{s.value}</p>
+              <p className="mt-1 text-sm font-medium uppercase tracking-wide text-gray-300">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {whyChooseUs.map((reason, index) => (
-              <div
-                key={index}
-                className="rounded-2xl bg-brand-card p-6 transition-all hover:ring-1 hover:ring-primary/30"
-              >
-                <CheckCircle className="size-8 text-primary" />
-                <p className="mt-4 text-gray-300 leading-relaxed">{reason}</p>
+      <Certifications />
+      <WhyChooseUs />
+
+      {/* Guarantees */}
+      <section className="bg-white py-16">
+        <div className="container-site">
+          <h2 className="text-center font-heading text-3xl tracking-tight text-gray-900">
+            Our Promise to You
+          </h2>
+          <div className="mx-auto mt-10 grid max-w-4xl gap-5 sm:grid-cols-3">
+            {guarantees.map((g) => (
+              <div key={g} className="rounded-2xl border border-primary/15 bg-primary/5 p-6 text-center">
+                <Check className="mx-auto size-8 text-primary" />
+                <p className="mt-3 font-semibold text-gray-900">{g}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* USPs */}
-      {usps.length > 0 && (
-        <section className="py-20 lg:py-28">
-          <div className="mx-auto max-w-[1770px] px-4 sm:px-6 lg:px-8">
-            <h2 className="font-heading text-center text-3xl text-brand-dark sm:text-4xl lg:text-5xl">
-              What Sets Us <span className="text-primary">Apart</span>
-            </h2>
-            <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {usps.map((usp, index) => {
-                const Icon = uspIcons[index % uspIcons.length];
-                return (
-                  <div key={index} className="flex items-start gap-4">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-primary/10">
-                      <Icon className="size-6 text-primary" />
-                    </div>
-                    <p className="text-lg text-gray-700 leading-relaxed">{usp}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Stats Bar */}
-      <section className="bg-primary py-14">
-        <div className="mx-auto max-w-[1770px] px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 text-center sm:grid-cols-3">
-            <div>
-              <p className="font-heading text-5xl text-white">{yearsInBusiness}+</p>
-              <p className="mt-2 text-white/80">Years in Business</p>
-            </div>
-            <div>
-              <p className="font-heading text-5xl text-white">{siteConfig.serviceAreas.length}+</p>
-              <p className="mt-2 text-white/80">Communities Served</p>
-            </div>
-            <div>
-              <p className="font-heading text-5xl text-white">100%</p>
-              <p className="mt-2 text-white/80">Satisfaction Guarantee</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
       <CTASection
-        title="Ready to Work With Us?"
-        subtitle={`Contact ${businessName} today for a free estimate. We look forward to earning your trust.`}
-        variant="dark"
-        backgroundImage="/images/about/about-bg.jpg"
+        title="Ready to Work With a Team You Can Trust?"
+        subtitle={`Call ${businessName} today for a free estimate from ${primaryCity}'s trusted arborists.`}
       />
     </>
   );

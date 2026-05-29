@@ -1,90 +1,102 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { siteConfig } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/metadata";
-import { Hero } from "@/components/sections/hero";
+import { generateBreadcrumbSchema, baseUrl, jsonLd } from "@/lib/schema";
+import { PageHero } from "@/components/sections/page-hero";
 import { CTASection } from "@/components/sections/cta-section";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 export const metadata: Metadata = generatePageMetadata(
   {
-    title: "Service Areas",
-    description: `${siteConfig.businessName} provides professional tree services from the Sierra Foothills to the Central Valley. Serving ${siteConfig.serviceAreas.slice(0, 10).map((a) => a.city).join(", ")} and surrounding areas.`,
+    title: `Service Areas — ${siteConfig.primaryState} Tree Service`,
+    description: `${siteConfig.businessName} provides professional tree service across ${siteConfig.primaryState}. See all the cities and towns we serve — free estimates everywhere we work. Call ${siteConfig.phone}.`,
     path: "/areas",
   },
   siteConfig
 );
 
 export default function AreasPage() {
-  const { serviceAreas, businessName, primaryCity, primaryState } = siteConfig;
+  const { serviceAreas, businessName, primaryState } = siteConfig;
+  const url = baseUrl(siteConfig);
+
+  // Group by county/region
+  const groups = serviceAreas.reduce<Record<string, typeof serviceAreas>>((acc, area) => {
+    const key = area.county ?? `${primaryState}`;
+    (acc[key] ??= []).push(area);
+    return acc;
+  }, {});
+
+  const schema = jsonLd(
+    generateBreadcrumbSchema([
+      { name: "Home", url: `${url}/` },
+      { name: "Service Areas", url: `${url}/areas` },
+    ])
+  );
 
   return (
     <>
-      <Hero
-        title="Service Areas"
-        subtitle={`${businessName} proudly serves homeowners from the Sierra Foothills to the Central Valley. Find your city below to learn more about the tree care services we offer in your area.`}
-        backgroundImage="/images/areas/suburban-1.jpg"
-        showBadges={false}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: schema }} />
+
+      <PageHero
+        title="Areas We Serve"
+        subtitleHtml={`${businessName} provides <strong>licensed &amp; insured</strong> tree care across ${primaryState}. Find your town below — and if you don't see it, just call, we likely cover it.`}
+        breadcrumbs={[{ name: "Home", href: "/" }, { name: "Service Areas" }]}
       />
 
-      <section className="py-16">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Communities We Serve
-            </h2>
-            <p className="mt-4 text-lg text-gray-600">
-              Based in {primaryCity}, {primaryState}, we provide tree removal, trimming, stump grinding, and emergency tree services to homeowners throughout Central California.
+      <section className="bg-white py-16 lg:py-20">
+        <div className="container-site">
+          <div className="article-content mb-12 max-w-3xl">
+            <p>
+              {businessName} is a locally owned tree service proudly serving homeowners and
+              businesses throughout {primaryState}. For over {siteConfig.yearsInBusiness} years
+              we&apos;ve helped property owners across the region keep their trees healthy, safe,
+              and beautiful — from routine <a href="/services/tree-trimming">trimming</a> and{" "}
+              <a href="/services/stump-grinding">stump grinding</a> to emergency{" "}
+              <a href="/services/storm-damage-cleanup">storm damage cleanup</a> and complete{" "}
+              <a href="/services/tree-removal">tree removal</a>.
+            </p>
+            <p>
+              Because we&apos;re local, we know the soil, the tree species, and the storm patterns
+              of every community we serve — and we can usually get to you fast. Select your town
+              below to learn more about tree service in your area, or simply give us a call for a{" "}
+              <strong>free, no-obligation estimate</strong>. Don&apos;t see your town listed? There&apos;s
+              a good chance we still cover it — reach out and we&apos;ll let you know right away.
             </p>
           </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {serviceAreas.map((area) => (
-              <Link
-                key={area.slug}
-                href={`/areas/${area.slug}`}
-                className="group"
-              >
-                <Card className="h-full overflow-hidden border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg">
-                  {area.image && (
-                    <div className="relative aspect-[16/10]">
-                      <Image
-                        src={area.image}
-                        alt={`${area.city}, ${area.state}`}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      />
-                      <div className="absolute inset-0 bg-black/30 transition-colors group-hover:bg-black/20" />
-                      <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
-                        <MapPin className="size-4" />
-                        <span className="text-sm font-medium">{area.zipCode}</span>
-                      </div>
-                    </div>
-                  )}
-                  <CardHeader>
-                    <CardTitle className="text-lg font-bold text-gray-900 group-hover:text-primary">
-                      {area.city}, {area.state}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <span className="inline-flex items-center gap-1 text-sm font-medium text-primary">
-                      View Services in {area.city}
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+        </div>
+        <div className="container-site space-y-12">
+          {Object.entries(groups).map(([county, areas]) => (
+            <div key={county}>
+              <h2 className="font-heading text-2xl tracking-tight text-gray-900">{county}</h2>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {areas.map((area) => (
+                  <Link
+                    key={area.slug}
+                    href={`/areas/${area.slug}`}
+                    title={`Tree Service in ${area.city}, ${area.state} — ${businessName}`}
+                    className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-5 shadow-[var(--shadow-natural)] transition-all hover:-translate-y-0.5 hover:border-primary"
+                  >
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10">
+                      <MapPin className="size-5 text-primary" />
                     </span>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    <span>
+                      <span className="block font-heading text-lg tracking-tight text-gray-900 group-hover:text-primary">
+                        {area.city}, {area.state}
+                      </span>
+                      <span className="text-sm text-gray-500">Tree service near you</span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
       <CTASection
-        title="Don't See Your Area?"
-        subtitle={`We may still serve your neighborhood. Give us a call and we'll let you know.`}
+        title="Serving Your Neighborhood"
+        subtitle={`Call ${businessName} today for fast, local, fully insured tree care across ${primaryState}.`}
       />
     </>
   );

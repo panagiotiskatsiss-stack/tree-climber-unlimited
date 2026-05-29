@@ -1,182 +1,207 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState } from "react";
 import { siteConfig } from "@/lib/site-config";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, AlertCircle, Loader2, Send } from "lucide-react";
+import { CheckCircle2, Loader2, Phone } from "lucide-react";
 
-type FormStatus = "idle" | "loading" | "success" | "error";
+type Variant = "hero" | "section" | "popup";
 
 interface QuoteFormProps {
-  variant?: "hero" | "section";
+  variant?: Variant;
+  className?: string;
 }
 
-export function QuoteForm({ variant = "hero" }: QuoteFormProps) {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
+const MESSAGE_LIMIT = 300;
+
+export function QuoteForm({ variant = "section", className }: QuoteFormProps) {
+  const { services, ctaText, phone } = siteConfig;
+  const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
+
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleSubmit(e: FormEvent) {
+  const onDark = variant === "hero";
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
 
-    if (!name.trim() || !phone.trim() || !email.trim()) {
-      setStatus("error");
-      setErrorMessage("Please fill in all required fields.");
-      return;
-    }
+    // Honeypot — bots fill hidden fields
+    if (data.get("company")) return;
 
-    setStatus("loading");
-    setErrorMessage("");
+    setStatus("submitting");
+    setErrorMsg("");
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: name.trim(),
-          phone: phone.trim(),
-          email: email.trim(),
-          service: "",
-          message: message.trim(),
+          name: data.get("name"),
+          phone: data.get("phone"),
+          email: data.get("email"),
+          service: data.get("service"),
+          message: data.get("message"),
         }),
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setStatus("error");
-        setErrorMessage(data?.error || "Something went wrong. Please call us directly.");
-        return;
+      const json = await res.json();
+      if (!res.ok || !json.success) {
+        throw new Error(json.error || "Something went wrong. Please try again.");
       }
-
       setStatus("success");
-      setName("");
-      setPhone("");
-      setEmail("");
+      form.reset();
       setMessage("");
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMessage("Something went wrong. Please call us directly.");
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong.");
     }
   }
 
-  const isHero = variant === "hero";
-
   if (status === "success") {
     return (
-      <div className={`flex flex-col items-center justify-center rounded-2xl p-8 text-center ${isHero ? "bg-brand-dark/95 ring-1 ring-white/10 min-h-[400px]" : "border border-green-200 bg-green-50"}`}>
-        <CheckCircle className={`mb-4 size-14 ${isHero ? "text-primary" : "text-green-600"}`} />
-        <h3 className={`text-xl font-bold ${isHero ? "text-white" : "text-gray-900"}`}>
-          Thank You!
-        </h3>
-        <p className={`mt-2 ${isHero ? "text-gray-200" : "text-gray-600"}`}>
-          We&apos;ll get back to you shortly. For immediate help, call{" "}
-          <a
-            href={`tel:${siteConfig.phone.replace(/\D/g, "")}`}
-            className="font-bold text-primary hover:underline"
-          >
-            {siteConfig.phone}
-          </a>
+      <div
+        className={cn(
+          "flex flex-col items-center justify-center gap-3 rounded-2xl p-8 text-center",
+          onDark ? "bg-white text-gray-900" : "bg-primary/5",
+          className
+        )}
+      >
+        <CheckCircle2 className="size-12 text-primary" />
+        <h3 className="font-heading text-2xl text-gray-900">Thank You!</h3>
+        <p className="text-gray-600">
+          We&apos;ve received your request and will get back to you shortly. Need help now?
         </p>
-        <button
-          onClick={() => setStatus("idle")}
-          className="mt-4 text-sm font-medium text-primary underline"
-        >
-          Send another message
-        </button>
+        <a href={phoneHref}>
+          <Button className="mt-1 h-11 gap-2 rounded-full px-6 font-bold">
+            <Phone className="size-4" />
+            {phone}
+          </Button>
+        </a>
       </div>
     );
   }
 
+  const labelCls = cn(
+    "mb-1 block text-sm font-semibold",
+    onDark ? "text-gray-800" : "text-gray-800"
+  );
+  const inputCls =
+    "w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5 text-sm text-gray-900 outline-none transition-colors placeholder:text-gray-400 focus:border-primary focus:ring-2 focus:ring-primary/20";
+
   return (
-    <div className={isHero ? "rounded-2xl bg-brand-dark/95 p-6 shadow-2xl ring-1 ring-white/10 sm:p-8" : "rounded-2xl border border-gray-200 bg-white p-6 shadow-lg sm:p-8"}>
-      <h3 className={`font-heading text-2xl tracking-wide ${isHero ? "text-white" : "text-brand-dark"}`}>
-        Get Your Free Quote
-      </h3>
-      <p className={`mt-1 text-sm ${isHero ? "text-gray-400" : "text-gray-500"}`}>
-        No obligation. We&apos;ll get back to you fast.
-      </p>
+    <div
+      className={cn(
+        variant === "hero" && "rounded-2xl bg-white p-6 shadow-[var(--shadow-deep)] sm:p-7",
+        variant === "section" && "rounded-2xl border border-gray-200 bg-white p-6 shadow-[var(--shadow-natural)] sm:p-8",
+        variant === "popup" && "p-1",
+        className
+      )}
+    >
+      {variant !== "popup" && (
+        <div className="mb-5">
+          <h2 className="font-heading text-2xl tracking-tight text-gray-900 sm:text-3xl">
+            {ctaText}
+          </h2>
+          <p className="mt-1 text-sm text-gray-600">
+            Fast response. No obligation. We&apos;ll be in touch shortly.
+          </p>
+        </div>
+      )}
 
-      <form onSubmit={handleSubmit} className="mt-5 space-y-3">
-        {status === "error" && errorMessage && (
-          <div className="flex items-center gap-2 rounded-lg bg-red-500/20 p-2.5 text-sm text-red-200">
-            <AlertCircle className="size-4 shrink-0" />
-            {errorMessage}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3.5" noValidate>
+        {/* Honeypot — display:none keeps it out of the a11y tree AND the tab order */}
+        <label className="hidden">
+          Company (leave blank)
+          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        </label>
+
+        <div>
+          <label htmlFor="qf-name" className={labelCls}>
+            Full Name
+          </label>
+          <input id="qf-name" name="name" type="text" required placeholder="John Smith" className={inputCls} />
+        </div>
+
+        <div className="grid gap-3.5 sm:grid-cols-2">
+          <div>
+            <label htmlFor="qf-phone" className={labelCls}>
+              Phone
+            </label>
+            <input id="qf-phone" name="phone" type="tel" required placeholder="(908) 555-0123" className={inputCls} />
           </div>
+          <div>
+            <label htmlFor="qf-email" className={labelCls}>
+              Email
+            </label>
+            <input id="qf-email" name="email" type="email" required placeholder="you@email.com" className={inputCls} />
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="qf-service" className={labelCls}>
+            Service Needed
+          </label>
+          <select id="qf-service" name="service" defaultValue="" className={cn(inputCls, "cursor-pointer")}>
+            <option value="" disabled>
+              Select a service…
+            </option>
+            {services.map((s) => (
+              <option key={s.slug} value={s.name}>
+                {s.name}
+              </option>
+            ))}
+            <option value="Other / Not sure">Other / Not sure</option>
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="qf-message" className={labelCls}>
+            How can we help? <span className="font-normal text-gray-400">(optional)</span>
+          </label>
+          <textarea
+            id="qf-message"
+            name="message"
+            rows={3}
+            maxLength={MESSAGE_LIMIT}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Tell us a bit about the job…"
+            className={cn(inputCls, "resize-none")}
+          />
+          <p className="mt-1 text-right text-xs text-gray-400">
+            {message.length}/{MESSAGE_LIMIT}
+          </p>
+        </div>
+
+        {status === "error" && (
+          <p className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">{errorMsg}</p>
         )}
-
-        <input
-          type="text"
-          placeholder="Your Name *"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          className={`w-full rounded-xl px-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-primary ${
-            isHero
-              ? "bg-white text-gray-900 placeholder:text-gray-400"
-              : "border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
-
-        <input
-          type="tel"
-          placeholder="Phone Number *"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-          className={`w-full rounded-xl px-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-primary ${
-            isHero
-              ? "bg-white text-gray-900 placeholder:text-gray-400"
-              : "border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
-
-        <input
-          type="email"
-          placeholder="Email Address *"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className={`w-full rounded-xl px-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-primary ${
-            isHero
-              ? "bg-white text-gray-900 placeholder:text-gray-400"
-              : "border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
-
-        <textarea
-          placeholder="How can we help?"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          rows={3}
-          className={`w-full resize-none rounded-xl px-4 py-3.5 text-sm outline-none transition-all focus:ring-2 focus:ring-primary ${
-            isHero
-              ? "bg-white text-gray-900 placeholder:text-gray-400"
-              : "border border-gray-200 bg-white text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
 
         <Button
           type="submit"
-          size="lg"
-          className="h-12 w-full cursor-pointer rounded-xl text-base font-bold uppercase tracking-wide"
-          disabled={status === "loading"}
+          disabled={status === "submitting"}
+          className="h-12 w-full rounded-full text-base font-bold uppercase tracking-wide"
         >
-          {status === "loading" ? (
+          {status === "submitting" ? (
             <>
               <Loader2 className="size-5 animate-spin" />
-              Sending...
+              Sending…
             </>
           ) : (
-            <>
-              <Send className="size-4" />
-              Get Free Estimate
-            </>
+            ctaText
           )}
         </Button>
+
+        <p className="text-center text-xs text-gray-500">
+          Prefer to talk? Call{" "}
+          <a href={phoneHref} className="font-semibold text-primary hover:underline">
+            {phone}
+          </a>
+        </p>
       </form>
     </div>
   );

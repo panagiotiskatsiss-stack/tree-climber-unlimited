@@ -1,64 +1,55 @@
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { Button } from "@/components/ui/button";
-import { Home, Phone, Mail } from "lucide-react";
+import { Home, Phone, ArrowRight } from "lucide-react";
 
 export default function NotFound() {
-  const { phone, email, businessName } = siteConfig;
+  const { phone, businessName, services } = siteConfig;
   const phoneHref = `tel:${phone.replace(/\D/g, "")}`;
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4 pt-24 pb-16">
-      <div className="mx-auto max-w-lg text-center">
-        <p className="text-7xl font-extrabold text-primary">404</p>
-        <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+    <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden bg-brand-dark py-20">
+      <div className="container-site relative text-center">
+        <p className="font-heading text-7xl text-primary sm:text-8xl">404</p>
+        <h1 className="mt-3 font-heading text-3xl tracking-tight text-white sm:text-4xl">
           Page Not Found
         </h1>
-        <p className="mt-4 text-lg text-gray-600">
-          Sorry, we couldn&apos;t find the page you&apos;re looking for. It may have
-          been moved or no longer exists.
+        <p className="mx-auto mt-3 max-w-md text-lg text-gray-300">
+          Sorry, we couldn&apos;t find that page. Let&apos;s get you back on track — or just give{" "}
+          {businessName} a call.
         </p>
 
-        <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link href="/">
-            <Button size="lg" className="h-12 cursor-pointer gap-2 px-8 text-base font-semibold">
+            <Button className="h-12 gap-2 rounded-full px-7 font-bold uppercase tracking-wide">
               <Home className="size-5" />
-              Go Home
+              Back Home
             </Button>
           </Link>
-          <Link href="/contact">
+          <a href={phoneHref}>
             <Button
               variant="outline"
-              size="lg"
-              className="h-12 cursor-pointer px-8 text-base font-semibold"
-            >
-              Contact Us
-            </Button>
-          </Link>
-        </div>
-
-        <div className="mt-10 rounded-lg border border-gray-200 bg-gray-50 p-6">
-          <p className="mb-3 text-sm font-medium text-gray-900">
-            Need help? Contact {businessName} directly:
-          </p>
-          <div className="flex flex-col items-center gap-3">
-            <a
-              href={phoneHref}
-              className="inline-flex items-center gap-2 text-lg font-bold text-primary hover:underline"
+              className="h-12 gap-2 rounded-full border-white/30 bg-white/5 px-7 font-bold uppercase tracking-wide text-white hover:bg-white/15 hover:text-white"
             >
               <Phone className="size-5" />
               {phone}
-            </a>
-            <a
-              href={`mailto:${email}`}
-              className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-primary"
+            </Button>
+          </a>
+        </div>
+
+        <div className="mx-auto mt-10 flex max-w-xl flex-wrap justify-center gap-2">
+          {services.map((s) => (
+            <Link
+              key={s.slug}
+              href={`/services/${s.slug}`}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-200 transition-colors hover:border-primary hover:text-white"
             >
-              <Mail className="size-4" />
-              {email}
-            </a>
-          </div>
+              {s.name}
+              <ArrowRight className="size-3.5" />
+            </Link>
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }

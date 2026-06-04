@@ -114,6 +114,17 @@ export function Footer() {
                 </Link>
               </li>
             ))}
+            <li>
+              <a
+                href="/sitemap.xml"
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`Sitemap — ${businessName}`}
+                className="text-gray-400 transition-colors hover:text-primary"
+              >
+                Sitemap
+              </a>
+            </li>
           </ul>
         </nav>
 
